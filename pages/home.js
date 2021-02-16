@@ -19,3 +19,9 @@ export default function Index() {
     </Layout>
   );
 }
+
+export async function getServerSideProps(context) {
+  return {
+    props: {},
+  }
+}
