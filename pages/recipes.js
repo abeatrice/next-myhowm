@@ -6,7 +6,7 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 
-function Index({recipes}) {
+function Page({recipes}) {
   return (
     <Layout>
       <Head>
@@ -29,7 +29,6 @@ function Index({recipes}) {
           )
         })
       }
-      
     </Layout>
   );
 }
@@ -42,4 +41,4 @@ export async function getServerSideProps(context) {
   }
 }
 
-export default Index
+export default Page
