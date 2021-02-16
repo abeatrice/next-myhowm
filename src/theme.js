@@ -1,20 +1,35 @@
 import { createMuiTheme } from '@material-ui/core/styles';
-import { red } from '@material-ui/core/colors';
+import { blue, pink, red, green, cyan, orange, grey } from '@material-ui/core/colors';
 
 // Create a theme instance.
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: '#556cd6',
+      light: blue.A700,
+      main: blue.A700,
+      dark: blue.A700,
+      contrastText: grey[50],
     },
     secondary: {
-      main: '#19857b',
+      main: pink.A700,
+    },
+    success: {
+      main: green.A700,
+    },
+    info: {
+      light: cyan.A700,
+      main: cyan.A700,
+      dark: cyan.A700,
+      contrastText: grey[50],
+    },
+    warning: {
+      main: orange.A700,
     },
     error: {
       main: red.A400,
     },
     background: {
-      default: '#fff',
+      default: grey[900],
     },
   },
 });

@@ -1,19 +1,18 @@
-import Container from '@material-ui/core/Container';
+import Link from '../components/Link';
 import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import Link from '../src/Link';
 
 export default function Index() {
   return (
-    <Container maxWidth="sm">
-      <Box my={4}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Welcome
-        </Typography>
-        <Link href="/about" color="secondary">
-          About
-        </Link>
-      </Box>
-    </Container>
+    <>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Welcome
+      </Typography>
+      <Link href="/login" color="primary">
+        Login
+      </Link>
+      <Link href="/register" color="secondary">
+        Register
+      </Link>
+    </>
   );
 }
