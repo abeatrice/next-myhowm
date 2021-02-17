@@ -1,9 +1,10 @@
-import Link from '../components/Link';
-import Typography from '@material-ui/core/Typography';
+import Link from '../components/Link'
+import Typography from '@material-ui/core/Typography'
+import GuestLayout from '../components/GuestLayout'
 
 export default function Index() {
   return (
-    <>
+    <GuestLayout>
       <Typography variant="h4" component="h1" gutterBottom>
         Welcome
       </Typography>
@@ -13,6 +14,6 @@ export default function Index() {
       <Link href="/register" color="secondary">
         Register
       </Link>
-    </>
+    </GuestLayout>
   );
 }

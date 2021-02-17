@@ -1,14 +1,17 @@
 import React from 'react'
 import Head from 'next/head'
 import Typography from '@material-ui/core/Typography'
-import Layout from '../components/layout'
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
+import AuthLayout from '../components/AuthLayout'
+import Card from '@material-ui/core/Card'
+import CardHeader from '@material-ui/core/CardHeader'
+import CardContent from '@material-ui/core/CardContent'
+import {authenticate} from '../utils/auth'
+import {Cookies} from 'react-cookie'
+import axios from 'axios'
 
 function Page({recipes}) {
   return (
-    <Layout>
+    <AuthLayout>
       <Head>
         <title>MyHowm Recipes - mmm... what's cooking?</title>
       </Head>
@@ -29,12 +32,15 @@ function Page({recipes}) {
           )
         })
       }
-    </Layout>
+    </AuthLayout>
   );
 }
 
 export async function getServerSideProps(context) {
-  const res = await fetch(`http://127.0.0.1:3000/recipes`)
+  await authenticate(context)
+  const cookies = new Cookies();
+  const token = cookies.get('token')
+  const res = await axios.get('http://localhost/recipes', { headers: { 'Authorization': 'Bearer ' + token } })
   const data = await res.json()
   return {
     props: {recipes: data.data},

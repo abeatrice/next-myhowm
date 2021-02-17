@@ -2,7 +2,7 @@ import AppBar from '../components/AppBar';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 
-export default function({children}) {
+export default function AuthLayout({children}) {
   return (
     <>
       <AppBar />

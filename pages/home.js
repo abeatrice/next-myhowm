@@ -1,12 +1,12 @@
 import React from 'react'
 import Head from 'next/head'
-import Layout from '../components/layout'
+import AuthLayout from '../components/AuthLayout'
 import Typography from '@material-ui/core/Typography'
 import Link from 'next/link'
 
 export default function Index() {
   return (
-    <Layout>
+    <AuthLayout>
         <Head>
           <title>MyHowm Recipes - mmm... what's cooking?</title>
         </Head>
@@ -16,7 +16,7 @@ export default function Index() {
         <Link href="/recipes" color="primary">
           Recipes
         </Link>
-    </Layout>
+    </AuthLayout>
   );
 }
 
