@@ -1,13 +1,10 @@
 import React from 'react'
-import Head from 'next/head'
-import Typography from '@material-ui/core/Typography'
-import AuthLayout from '../components/AuthLayout'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
-import CardContent from '@material-ui/core/CardContent'
-import {authenticate} from '../utils/auth'
 import {Cookies} from 'react-cookie'
+import Head from 'next/head'
 import axios from 'axios'
+import {Typography, CardHeader, CardContent, Card} from '@material-ui/core'
+import AuthLayout from '../components/AuthLayout'
+import {authenticate} from '../utils/auth'
 
 function Page({recipes}) {
   return (

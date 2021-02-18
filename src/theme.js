@@ -28,7 +28,13 @@ const theme = createMuiTheme({
     error: {
       main: red.A400,
     },
+    text: {
+      primary: grey[50],
+      secondary: grey[400],
+      disabled: grey[500],
+    },
     background: {
+      light: grey[800],
       default: grey[900],
     },
   },
