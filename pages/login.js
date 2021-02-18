@@ -1,9 +1,9 @@
 import React, {useState} from 'react'
-import {userRouter} from 'next/router'
+import {useRouter} from 'next/router'
 import GuestLayout from '../components/GuestLayout'
 import NextLink from 'next/link'
 import {makeStyles} from '@material-ui/core/styles'
-import {TextField, Typography, Button, Grid, Box} from '@material-ui/core'
+import {TextField, Typography, Button, Grid, Box, FormControl, FormHelperText} from '@material-ui/core'
 import {authenticate} from '../utils/auth'
 import {Cookies} from 'react-cookie'
 import axios from 'axios'
@@ -39,19 +39,33 @@ function Page() {
   const classes = useStyles()
   const [UserName, setUserName] = useState('')
   const [Password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [userNameError, setUserNameError] = useState(false)
+  const [passwordError, setPasswordError] = useState(false)
+  const [helperText, setHelperText] = useState('')
+  const cookies = new Cookies()
+  const router = useRouter()
 
   const onSubmit = (event) => {
     event.preventDefault()
     axios.post('http://127.0.0.1:3000/users/login', {UserName, Password})
       .then(function(response) {
-        console.log(response)
-        // router.push('/')
+        console.log(response.data.data.Token)
+        const token = response.data.data.Token;
+        cookies.set('token', token);
+        router.push('/')
       })
       .catch(function(error) {
-        setError(error.response.data.message)
+        let msg = error.response.data.message
+        if (msg.includes("UserName")) {
+          setUserNameError(true)
+        } else if (msg.includes("Password")) {
+          setPasswordError(true)
+        } else {
+          setUserNameError(true)
+          setPasswordError(true)
+        }
+        setHelperText(msg)
       })
-
   }
 
   return (
@@ -72,7 +86,8 @@ function Page() {
             autoComplete="username"
             autoFocus
             value={UserName}
-            onInput={e => setUserName(e.target.value)}
+            error={userNameError}
+            onInput={e => {setUserName(e.target.value); setUserNameError(false); setHelperText('')}}
           />
           <TextField
             variant="outlined"
@@ -85,8 +100,12 @@ function Page() {
             id="Password"
             autoComplete="current-password"
             value={Password}
-            onInput={e => setPassword(e.target.value)}
+            error={passwordError}
+            onInput={e => {setPassword(e.target.value); setPasswordError(false); setHelperText('')}}
           />
+          <FormControl error={passwordError || userNameError}>
+            <FormHelperText>{helperText}</FormHelperText>
+          </FormControl>
           <Button 
             type="submit" 
             fullWidth 
