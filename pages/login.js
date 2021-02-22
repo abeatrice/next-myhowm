@@ -49,10 +49,9 @@ function Page() {
     event.preventDefault()
     axios.post('http://127.0.0.1:3000/users/login', {UserName, Password})
       .then(function(response) {
-        console.log(response.data.data.Token)
         const token = response.data.data.Token;
         cookies.set('token', token);
-        router.push('/')
+        router.push('/home')
       })
       .catch(function(error) {
         let msg = error.response.data.message
