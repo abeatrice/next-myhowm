@@ -1,8 +1,9 @@
-import React from 'react'
+import React, {useState} from 'react'
+import {useRouter} from 'next/router'
 import GuestLayout from '../components/GuestLayout'
 import NextLink from 'next/link'
 import {makeStyles} from '@material-ui/core/styles'
-import {TextField, Typography, Button, Grid, Box} from '@material-ui/core'
+import {TextField, Typography, Button, Grid, Box, FormControl, FormHelperText} from '@material-ui/core'
 import {authenticate} from '../utils/auth'
 import {Cookies} from 'react-cookie'
 import axios from 'axios'
@@ -36,13 +37,47 @@ const useStyles = makeStyles((theme) => ({
 
 function Page() {
   const classes = useStyles()
+  const router = useRouter()
+  const cookies = new Cookies()
+  const [UserName, setUserName] = useState('')
+  const [Email, setEmail] = useState('')
+  const [Password, setPassword] = useState('')
+  const [UserNameError, setUserNameError] = useState(false)
+  const [EmailError, setEmailError] = useState(false)
+  const [PasswordError, setPasswordError] = useState(false)
+  const [helperText, setHelperText] = useState('')
+
+  const onSubmit = (event) => {
+    event.preventDefault()
+    axios.post('http://127.0.0.1:3000/users/register', {UserName, Email, Password})
+      .then(res => {
+        const token = res.data.data.Token
+        cookies.set('token', token)
+        router.push('/home')
+      })
+      .catch(err => {
+        let msg = err.response.data.message
+        if (msg.includes("UserName")) {
+          setUserNameError(true)
+        } else if (msg.includes("Email")) {
+          setEmailError(true)
+        } else if (msg.includes("Password")) {
+          setPasswordError(true)
+        } else {
+          setUserNameError(true)
+          setPasswordError(true)
+        }
+        setHelperText(msg)
+      })
+  }
+
   return (
     <GuestLayout>
       <div className={classes.paper} elevation={3}>
         <Typography component="h1" variant="h5">
           MyHowm
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} noValidate onSubmit={onSubmit}>
           <TextField 
             variant="outlined"
             margin="normal"
@@ -53,6 +88,9 @@ function Page() {
             name="UserName"
             autoComplete="username"
             autoFocus
+            value={UserName}
+            error={UserNameError}
+            onInput={e => {setUserName(e.target.value); setHelperText(''); setUserNameError(false);}}
           />
           <TextField 
             variant="outlined"
@@ -63,6 +101,9 @@ function Page() {
             label="Email Address"
             name="Email"
             autoComplete="email"
+            value={Email}
+            error={EmailError}
+            onInput={e => {setEmail(e.target.value); setHelperText(''); setEmailError(false);}}
           />
           <TextField
             variant="outlined"
@@ -74,7 +115,13 @@ function Page() {
             type="Password"
             id="Password"
             autoComplete="current-password"
+            value={Password}
+            error={PasswordError}
+            onInput={e => {setPassword(e.target.value); setHelperText(''); setPasswordError(false);}}
           />
+          <FormControl error={PasswordError || UserNameError || EmailError}>
+            <FormHelperText>{helperText}</FormHelperText>
+          </FormControl>
           <Button 
             type="submit" 
             fullWidth 
