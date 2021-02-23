@@ -35,12 +35,11 @@ function Page({recipes}) {
 
 export async function getServerSideProps(context) {
   await authenticate(context)
-  const cookies = new Cookies();
+  const cookies = new Cookies()
   const token = cookies.get('token')
-  const res = await axios.get('http://localhost/recipes', { headers: { 'Authorization': 'Bearer ' + token } })
-  const data = await res.json()
+  const res = await axios.get('http://localhost:3000/recipes', { headers: { 'Authorization': 'Bearer ' + token } })
   return {
-    props: {recipes: data.data},
+    props: {recipes: res.data.data}
   }
 }
 
