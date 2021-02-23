@@ -64,6 +64,7 @@ function Page() {
         } else if (msg.includes("Password")) {
           setPasswordError(true)
         } else {
+          setEmailError(true)
           setUserNameError(true)
           setPasswordError(true)
         }
