@@ -6,7 +6,7 @@ export default function AuthLayout({children}) {
   return (
     <>
       <AppBar />
-      <Container maxWidth="sm">
+      <Container maxWidth="lg">
         <Box my={4}>
           {children}
         </Box>

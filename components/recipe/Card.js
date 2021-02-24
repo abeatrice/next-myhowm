@@ -1,42 +1,36 @@
 import React from 'react'
 import {makeStyles} from '@material-ui/core/styles'
-import {Card, CardActionArea, CardActions, CardContent, CardMedia} from '@material-ui/core'
-import {Button, Typography} from '@material-ui/core'
+import {Card, CardContent, CardMedia, Typography} from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 345,  
+    minWidth: 300,
+    maxWidth: 300,
+    minHeight: 300,
+    maxHeight: 300,
   },
   media: {
-    height: 140,
+    height: 150,
   },
 }))
 
-export default function RecipeCard() {
+export default function RecipeCard(props) {
   const classes = useStyles()
-
   return (
     <Card className={classes.root}>
-      <CardActionArea>
         <CardMedia 
           className={classes.media}
-          image="https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fimages.media-allrecipes.com%2Fuserphotos%2F3138358.jpg&w=596&h=596&c=sc&poi=face&q=85"
-          title="Pancake"
+          image={props.img}
+          title={props.name}
         />
         <CardContent>
-          <Typography gutterBottom variant="h5" component="h2">
-            Pancakes
+          <Typography component="h2" variant="h5" align="left" gutterBottom>
+            {props.name}
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            These pancakes are pretty good with some vanilla in them.
+          <Typography component="p" variant="body2" align="left" color="textSecondary">
+            {props.description}
           </Typography>
         </CardContent>
-      </CardActionArea>
-      <CardActions>
-        <Button size="small" color="primary">
-          Edit
-        </Button>
-      </CardActions>
     </Card>
   )
 }

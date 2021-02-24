@@ -1,18 +1,16 @@
 import React from 'react'
 import Head from 'next/head'
 import AuthLayout from '../components/AuthLayout'
-import RecipeCard from '../components/recipe/Card'
 import Typography from '@material-ui/core/Typography'
 import {authenticate} from '../utils/auth'
 import Link from 'next/link'
 
-export default function Index() {
+export default function Page() {
   return (
     <AuthLayout>
         <Head>
           <title>MyHowm - Time to relax...</title>
         </Head>
-        <RecipeCard></RecipeCard>
         <Typography variant="h4" component="h1" gutterBottom>
           Home
         </Typography>
