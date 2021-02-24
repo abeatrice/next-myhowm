@@ -3,8 +3,8 @@ import {useRouter} from 'next/router'
 import axios from 'axios'
 import {Cookies} from 'react-cookie'
 import {makeStyles} from '@material-ui/core/styles'
-import {AppBar, Toolbar, Typography, IconButton, Menu, Drawer, MenuItem} from '@material-ui/core'
-import AccountCircle from '@material-ui/icons/AccountCircle'
+import {AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText, Divider} from '@material-ui/core'
+import {Menu, Lock, Kitchen} from '@material-ui/icons'
 import NextLink from 'next/link'
 
 const useStyles = makeStyles((theme) => ({
@@ -15,17 +15,19 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     cursor: 'pointer',
   },
-  menuButton: {
-    marginRight: theme.spacing(2),
+  list: {
+    width: 250,
   }
 }))
 
 export default function MenuAppBar() {
   const classes = useStyles()
-  const [auth, setAuth] = React.useState(true)
-  const [anchorEl, setAnchorEl] = React.useState(null)
-  const open = Boolean(anchorEl)
   const router = useRouter()
+  const [open, setOpen] = React.useState(false)
+
+  const handleDrawerOpen = () => {
+    setOpen(true)
+  }
 
   const onSubmit = (event) => {
     event.preventDefault()
@@ -41,70 +43,46 @@ export default function MenuAppBar() {
       })
   };
 
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   return (
     <div className={classes.root}>
-      <AppBar position="static" color="transparent">
+      <AppBar position="static">
         <Toolbar>
-          <NextLink href="/">
+          <NextLink href="/home">
             <Typography variant="h6" className={classes.title}>
               MyHowm
             </Typography>
           </NextLink>
-          {auth && (
-            <div>
-              <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                keepMounted
-                open={open}
-                onClose={handleClose}
-                elevation={0}
-                getContentAnchorEl={null}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-              >
-                <MenuItem>
-                  <NextLink href="/recipes">
-                    <Typography variant="h6">
-                      Recipes
-                    </Typography>
-                  </NextLink>
-                </MenuItem>
-                <MenuItem>
+          <IconButton
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+          >
+            <Menu />
+          </IconButton>
+          <Drawer
+            open={open}
+            anchor="right"
+            onClose={() => setOpen(false)}
+            onKeyDown={() => setOpen(false)}
+          >
+            <List className={classes.list}>
+              <ListItem button>
+                <ListItemIcon><Kitchen /></ListItemIcon>
+                <ListItemText primary="Recipes" />
+              </ListItem>
+            </List>
+            <Divider />
+            <List>
+              <ListItem button onClick={onSubmit}>
+                  <ListItemIcon><Lock /></ListItemIcon>
                   <form noValidate onSubmit={onSubmit}>
-                    <Typography variant="h6" onClick={onSubmit}>
-                      Sign Out
-                    </Typography>
+                    <ListItemText primary="Sign Out" />
                   </form>
-                </MenuItem>
-              </Menu>
-            </div>
-          )}
+              </ListItem>
+            </List>
+          </Drawer>
         </Toolbar>
       </AppBar>
     </div>
-  );
+  )
 }
