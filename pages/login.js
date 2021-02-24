@@ -28,10 +28,6 @@ const useStyles = makeStyles((theme) => ({
   },
   signup: {
     cursor: 'pointer',
-    color: theme.palette.primary,
-    '&:hover': {
-      color: theme.palette.secondary,
-    },
   }
 }))
 
