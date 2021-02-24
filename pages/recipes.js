@@ -1,14 +1,13 @@
 import React from 'react'
 import Head from 'next/head'
-import Typography from '@material-ui/core/Typography'
-import Layout from '../components/layout'
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
+import axios from 'axios'
+import {Typography, CardHeader, CardContent, Card} from '@material-ui/core'
+import AuthLayout from '../components/AuthLayout'
+import {authenticate} from '../utils/auth'
 
 function Page({recipes}) {
   return (
-    <Layout>
+    <AuthLayout>
       <Head>
         <title>MyHowm Recipes - mmm... what's cooking?</title>
       </Head>
@@ -16,11 +15,11 @@ function Page({recipes}) {
         Recipes
       </Typography>
       {
-        recipes.map(recipe => {
+        recipes.map((recipe, index) => {
           return (
-            <Card key={recipe.ID}>
+            <Card key={index}>
               <CardHeader 
-                title={recipe.Name}
+                title={recipe.RecipeName}
               />
               <CardContent>
                 {recipe.Description}
@@ -29,15 +28,16 @@ function Page({recipes}) {
           )
         })
       }
-    </Layout>
+    </AuthLayout>
   );
 }
 
 export async function getServerSideProps(context) {
-  const res = await fetch(`http://127.0.0.1:3000/recipes`)
-  const data = await res.json()
+  await authenticate(context)
+  const token = context.req.headers.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+  const res = await axios.get('http://localhost:3000/recipes', { headers: { 'Authorization': 'Bearer ' + token } })
   return {
-    props: {recipes: data.data},
+    props: {recipes: res.data.data}
   }
 }
 

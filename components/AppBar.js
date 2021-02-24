@@ -1,35 +1,44 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import Link from './Link'
-import NextLink from 'next/link';
+import React from 'react'
+import {useRouter} from 'next/router'
+import axios from 'axios'
+import {Cookies} from 'react-cookie'
+import {makeStyles} from '@material-ui/core/styles'
+import {AppBar, Toolbar, Typography, IconButton, Menu, Drawer, MenuItem} from '@material-ui/core'
+import AccountCircle from '@material-ui/icons/AccountCircle'
+import NextLink from 'next/link'
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
   title: {
     flexGrow: 1,
+    cursor: 'pointer',
   },
-}));
+  menuButton: {
+    marginRight: theme.spacing(2),
+  }
+}))
 
 export default function MenuAppBar() {
-  const classes = useStyles();
-  const [auth, setAuth] = React.useState(true);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
+  const classes = useStyles()
+  const [auth, setAuth] = React.useState(true)
+  const [anchorEl, setAnchorEl] = React.useState(null)
+  const open = Boolean(anchorEl)
+  const router = useRouter()
 
-  const handleChange = (event) => {
-    setAuth(event.target.checked);
+  const onSubmit = (event) => {
+    event.preventDefault()
+    const cookies = new Cookies()
+    const token = cookies.get('token')
+    axios.post('http://127.0.0.1:3000/users/logout', {}, { headers: { 'Authorization': 'Bearer ' + token } })
+      .then(function(response) {
+        cookies.remove('token')
+        router.push('/login')
+      })
+      .catch(function(error) {
+        console.log(error)
+      })
   };
 
   const handleMenu = (event) => {
@@ -42,11 +51,13 @@ export default function MenuAppBar() {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
+      <AppBar position="static" color="transparent">
         <Toolbar>
-          <Typography variant="h6" className={classes.title}>
-            <NextLink href="/" color="secondary">MyHowm</NextLink>
-          </Typography>
+          <NextLink href="/">
+            <Typography variant="h6" className={classes.title}>
+              MyHowm
+            </Typography>
+          </NextLink>
           {auth && (
             <div>
               <IconButton
@@ -61,20 +72,34 @@ export default function MenuAppBar() {
               <Menu
                 id="menu-appbar"
                 anchorEl={anchorEl}
+                keepMounted
+                open={open}
+                onClose={handleClose}
+                elevation={0}
+                getContentAnchorEl={null}
                 anchorOrigin={{
                   vertical: 'top',
                   horizontal: 'right',
                 }}
-                keepMounted
                 transformOrigin={{
                   vertical: 'top',
                   horizontal: 'right',
                 }}
-                open={open}
-                onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
+                <MenuItem>
+                  <NextLink href="/recipes">
+                    <Typography variant="h6">
+                      Recipes
+                    </Typography>
+                  </NextLink>
+                </MenuItem>
+                <MenuItem>
+                  <form noValidate onSubmit={onSubmit}>
+                    <Typography variant="h6" onClick={onSubmit}>
+                      Sign Out
+                    </Typography>
+                  </form>
+                </MenuItem>
               </Menu>
             </div>
           )}
