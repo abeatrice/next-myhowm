@@ -4,6 +4,7 @@ import axios from 'axios'
 import {Typography, CardHeader, CardContent, Card} from '@material-ui/core'
 import AuthLayout from '../components/AuthLayout'
 import {authenticate} from '../utils/auth'
+import RecipeCardGrid from '../components/recipe/CardGrid'
 
 function Page({recipes}) {
   return (
@@ -14,20 +15,7 @@ function Page({recipes}) {
       <Typography variant="h4" component="h1" gutterBottom>
         Recipes
       </Typography>
-      {
-        recipes.map((recipe, index) => {
-          return (
-            <Card key={index}>
-              <CardHeader 
-                title={recipe.RecipeName}
-              />
-              <CardContent>
-                {recipe.Description}
-              </CardContent>
-            </Card>
-          )
-        })
-      }
+      <RecipeCardGrid recipes={recipes} />
     </AuthLayout>
   );
 }
