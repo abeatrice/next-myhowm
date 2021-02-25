@@ -1,8 +1,9 @@
 import Link from '../components/Link'
 import Typography from '@material-ui/core/Typography'
 import GuestLayout from '../components/GuestLayout'
+import {authenticate} from '../utils/auth'
 
-export default function Index() {
+function Page() {
   return (
     <GuestLayout>
       <Typography variant="h4" component="h1" gutterBottom>
@@ -17,3 +18,10 @@ export default function Index() {
     </GuestLayout>
   );
 }
+
+export async function getServerSideProps(context) {
+  await authenticate(context)
+  return {props: {}}
+}
+
+export default Page

@@ -23,11 +23,7 @@ export default function CardGrid(props) {
           props.recipes.map((recipe, index) => {
             return (
               <Grid item xs={12} sm={6} md={4} key={index}>
-                <RecipeCard
-                  img={recipe.ImgSrc}
-                  name={recipe.RecipeName}
-                  description={recipe.Description}
-                />
+                <RecipeCard recipe={recipe} />
               </Grid>
             )
           })

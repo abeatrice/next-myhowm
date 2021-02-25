@@ -25,8 +25,8 @@ export async function authenticate(context) {
             Router.push('/login')
         }
     } else {
-        //redirect home if user is signed in and attempts to visit login or register
-        if(context.res && ((context.resolvedUrl === '/login') || (context.resolvedUrl === '/register'))) {
+        //redirect home if user is signed in and attempts to visit index, login, or register
+        if(context.res && ((context.resolvedUrl === '/') || (context.resolvedUrl === '/login') || (context.resolvedUrl === '/register'))) {
             context.res.writeHead(302, {Location: '/home'})
             context.res.end()
         }
