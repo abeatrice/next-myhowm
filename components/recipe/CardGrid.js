@@ -1,6 +1,7 @@
 import React from 'react'
 import {makeStyles} from '@material-ui/core/styles'
 import RecipeCard from './Card'
+import CreateRecipeCard from './CreateCard'
 import {Grid} from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
@@ -28,6 +29,9 @@ export default function CardGrid(props) {
             )
           })
         }
+        <Grid item xs={12} sm={6} md={4}>
+          <CreateRecipeCard />
+        </Grid>
       </Grid>
     </div>
   )
