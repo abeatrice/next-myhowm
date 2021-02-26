@@ -1,8 +1,9 @@
 import React from 'react'
 import {makeStyles} from '@material-ui/core/styles'
-import {Card, CardContent, CardMedia, Typography} from '@material-ui/core'
+import {Card, CardContent, Typography} from '@material-ui/core'
 import {Dialog, DialogTitle, DialogContent, Slide, IconButton, Button, TextField} from '@material-ui/core'
 import {Grid, List, ListItem, Divider, Hidden, Box} from '@material-ui/core'
+import {DropzoneArea} from 'material-ui-dropzone'
 import CloseIcon from '@material-ui/icons/Close'
 import SaveIcon from '@material-ui/icons/Save'
 import AddIcon from '@material-ui/icons/Add'
@@ -25,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     width: 300,
     height: 300,
   },
-  largeMedia: {
+  dropZone: {
     height: 300,
     backgroundColor: theme.palette.action.hover
   },
@@ -66,12 +67,13 @@ export default function RecipeCard() {
   const classes = useStyles()
   const [open, setOpen] = React.useState(false)
   const [title, setTitle] = React.useState('')
+  const [file, setFile] = React.useState(null)
 
   const handleOpen = () => {setOpen(true)}
   const handleClose = () => {setOpen(false)}
   const handleSubmit = (event) => {
     event.preventDefault()
-    console.log(title)
+    console.log(file)
   }
 
   return (
@@ -122,9 +124,13 @@ export default function RecipeCard() {
         </DialogTitle>
         <DialogContent className={classes.dialogContent}>
             <Card elevation={0} className={classes.recipeDetailCard}>
-              <CardMedia
-                className={classes.largeMedia}
-                title="Recipe Name"
+              <DropzoneArea 
+                 acceptedFiles={['image/*']}
+                 dropzoneText={"Drag and drop an image here or click"}
+                 dropzoneClass={classes.dropZone}
+                 onChange={files => setFile(files[0])}
+                 className={classes.dropZone}
+                 filesLimit={1}
               />
               <CardContent>
                 <Typography component="p" variant="body1" align="left" color="textSecondary">
