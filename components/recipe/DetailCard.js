@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     height: 300,
   },
   title: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.info.main,
     margin: 0,
     padding: theme.spacing(2)
   },

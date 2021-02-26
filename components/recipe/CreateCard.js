@@ -1,9 +1,10 @@
 import React from 'react'
 import {makeStyles} from '@material-ui/core/styles'
 import {Card, CardContent, CardMedia, Typography} from '@material-ui/core'
-import {Dialog, DialogTitle, DialogContent, Slide, IconButton} from '@material-ui/core'
+import {Dialog, DialogTitle, DialogContent, Slide, IconButton, Button, TextField} from '@material-ui/core'
 import {Grid, List, ListItem, Divider, Hidden, Box} from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
+import SaveIcon from '@material-ui/icons/Save'
 import AddIcon from '@material-ui/icons/Add'
 
 const useStyles = makeStyles((theme) => ({
@@ -29,18 +30,26 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.action.hover
   },
   dialogTitle: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.info.main,
     margin: 0,
     padding: theme.spacing(2)
+  },
+  formTitle: {
+    margin: 0,
+    padding: 0,
+    width: '50ch'
   },
   dialogContent: {
     margin: 0,
     padding: 0,
   },
-  closeButton: {
+  formButtons: {
     position: 'absolute',
-    right: theme.spacing(3),
-    top: theme.spacing(1),
+    right: theme.spacing(2),
+    top: theme.spacing(2),
+  },
+  button: {
+    margin: theme.spacing(0, 1),
   },
   recipeDetailCard: {
     borderRadius: 0,
@@ -56,12 +65,17 @@ const Transition = React.forwardRef(
 export default function RecipeCard() {
   const classes = useStyles()
   const [open, setOpen] = React.useState(false)
-  
+  const [title, setTitle] = React.useState('')
+
   const handleOpen = () => {setOpen(true)}
   const handleClose = () => {setOpen(false)}
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    console.log(title)
+  }
 
   return (
-    <>
+    <form noValidate onSubmit={handleSubmit}>
       <Card className={classes.root} onClick={handleOpen} variant="outlined">
         <Box className={classes.content} display="flex" justifyContent="center" alignItems="center">
           <IconButton aria-label="add recipe">
@@ -70,11 +84,41 @@ export default function RecipeCard() {
         </Box>
       </Card>
       <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-        <DialogTitle className={classes.dialogTitle}>
-          <Typography component="h2" variant="h5">Recipe Name</Typography>
-          <IconButton className={classes.closeButton} onClick={handleClose} aria-label="close">
-            <CloseIcon />
-          </IconButton>
+        <DialogTitle className={classes.dialogTitle} disableTypography>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <TextField 
+              label="Recipe Name" 
+              size="small"
+              variant="outlined"
+              autoFocus
+              className={classes.formTitle}
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              />
+            <div>
+              <Button 
+                type="submit" 
+                variant="contained"
+                color="primary"
+                disableElevation
+                startIcon={<SaveIcon />}
+                className={classes.button}
+                onClick={handleSubmit}
+                >
+                Save
+              </Button>
+              <Button 
+                variant="contained"
+                color="secondary" 
+                disableElevation
+                startIcon={<CloseIcon />}
+                className={classes.button}
+                onClick={handleClose}
+                >
+                Nevermind
+              </Button>
+            </div>
+          </Box>
         </DialogTitle>
         <DialogContent className={classes.dialogContent}>
             <Card elevation={0} className={classes.recipeDetailCard}>
@@ -112,6 +156,6 @@ export default function RecipeCard() {
             </Card>
         </DialogContent>
       </Dialog>
-    </>
+    </form>
   )
 }
