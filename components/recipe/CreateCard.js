@@ -2,7 +2,7 @@ import React from 'react'
 import {makeStyles} from '@material-ui/core/styles'
 import {Card, CardContent, Typography} from '@material-ui/core'
 import {Dialog, DialogTitle, DialogContent, Slide, IconButton, Button, TextField} from '@material-ui/core'
-import {Grid, List, ListItem, Divider, Hidden, Box} from '@material-ui/core'
+import {Grid, List, ListItem, Divider, Hidden, Box, MenuItem} from '@material-ui/core'
 import {DropzoneArea} from 'material-ui-dropzone'
 import CloseIcon from '@material-ui/icons/Close'
 import SaveIcon from '@material-ui/icons/Save'
@@ -40,6 +40,13 @@ const useStyles = makeStyles((theme) => ({
     padding: 0,
     width: '50ch'
   },
+  formQty: {
+    width: '4ch',
+  },
+  formQtyType: {
+    width: '10ch',
+    margin: theme.spacing(0, 2)
+  },
   dialogContent: {
     margin: 0,
     padding: 0,
@@ -63,17 +70,54 @@ const Transition = React.forwardRef(
   }
 )
 
+const Units = ['whole', 'tsp', 'tbsp', 'fl oz', 'cup(s)', 'lb(s)', 'oz', 'mg', 'g']
+
 export default function RecipeCard() {
   const classes = useStyles()
   const [open, setOpen] = React.useState(false)
   const [title, setTitle] = React.useState('')
   const [file, setFile] = React.useState(null)
+  const [description, setDescription] = React.useState('')
+  const [ingredients, setIngredients] = React.useState([
+    {
+      qty: 0,
+      unit: Units[0],
+      ingredient: ''
+    }
+  ])
+  const [instructions, setInstructions] = React.useState([''])
 
   const handleOpen = () => {setOpen(true)}
   const handleClose = () => {setOpen(false)}
+
+  const handleChangeIngredient = (key, pos, value) => {
+    const newIngredients = [...ingredients].map((ingredient, index) => {
+      if(index === pos) {
+        let newIngredient = {...ingredient}
+        newIngredient[key] = value
+        return newIngredient
+      } else {
+        return ingredient
+      }
+    })
+    
+    setIngredients(newIngredients)
+  }
+
+  const handleChangeInstruction = (pos, value) => {
+    const newInstructions = [...instructions].map((step, index) => {
+      if(index === pos) {
+        return value
+      } else {
+        return step
+      }
+    })
+    setInstructions(newInstructions)
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault()
-    console.log(file)
+    console.log(description)
   }
 
   return (
@@ -96,7 +140,7 @@ export default function RecipeCard() {
               className={classes.formTitle}
               value={title}
               onChange={e => setTitle(e.target.value)}
-              />
+            />
             <div>
               <Button 
                 type="submit" 
@@ -133,28 +177,70 @@ export default function RecipeCard() {
                  filesLimit={1}
               />
               <CardContent>
-                <Typography component="p" variant="body1" align="left" color="textSecondary">
-                  Recipe Description
-                </Typography>
+                <TextField 
+                  label="Recipe Description"
+                  multiline
+                  rows={2}
+                  variant="outlined"
+                  fullWidth
+                  value={description}
+                  onChange={e => setDescription(e.target.value)}
+                />
                 <Grid container align="center" spacing={3}>
-                  <Grid item xs={12} sm={4} md={3}>
+                  <Grid item xs={12} sm={4}>
+                    <Box mt={1}>
+                      <Typography variant="h5" align="left">Ingredients</Typography>
+                    </Box>
                     <List>
-                      <Hidden smUp>
-                        <Divider />
-                      </Hidden>
-                      <ListItem>
-                        quantity ingredient
+                    {ingredients.map((ingredient, index) => (
+                      <ListItem key={index}>
+                        <TextField
+                          label="Qty"
+                          size="small"
+                          className={classes.formQty}
+                          value={ingredient.qty}
+                          onChange={e => handleChangeIngredient('qty', index, e.target.value)}
+                        />
+                        <TextField
+                          label="Unit"
+                          size="small"
+                          select
+                          className={classes.formQtyType}
+                          value={ingredient.unit}
+                          onChange={e => handleChangeIngredient('unit', index, e.target.value)}
+                        >
+                          {Units.map(unit => (
+                            <MenuItem key={unit} value={unit}>{unit}</MenuItem>
+                          ))}
+                        </TextField>
+                        <TextField
+                          label="Ingredient"
+                          size="small"
+                          value={ingredient.ingredient}
+                          onChange={e => handleChangeIngredient('ingredient', index, e.target.value)}
+                        />
                       </ListItem>
-                      <Hidden smUp>
-                        <Divider />
-                      </Hidden>
+                    ))}
                     </List>
                   </Grid>
-                  <Grid item xs={12} sm={8} md={9}>
+                  <Grid item xs={12} sm={8}>
+                    <Box mt={1}>
+                      <Typography variant="h5" align="left">Instructions</Typography>
+                    </Box>
                     <List>
-                      <ListItem>
-                        instruction
-                      </ListItem>
+                      {instructions.map((instruction, index) => (
+                        <ListItem key={index}>
+                          <TextField 
+                            label={"Step " + (index+1)}
+                            multiline
+                            rows={2}
+                            variant="outlined"
+                            fullWidth
+                            value={instruction}
+                            onChange={e => handleChangeInstruction(index, e.target.value)}
+                          />
+                        </ListItem>
+                      ))}
                     </List>
                   </Grid> 
                 </Grid>
