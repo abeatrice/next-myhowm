@@ -2,7 +2,7 @@ import React from 'react'
 import {makeStyles} from '@material-ui/core/styles'
 import {Card, CardContent, CardMedia, Typography} from '@material-ui/core'
 import {Dialog, DialogTitle, DialogContent, Slide, IconButton} from '@material-ui/core'
-import {Grid, List, ListItem, Divider, Hidden} from '@material-ui/core'
+import {Grid, List, ListItem, Divider, Hidden, Box} from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 
 const useStyles = makeStyles((theme) => ({
@@ -59,35 +59,30 @@ export default function RecipeCard(props) {
               </Typography>
               <Grid container align="center" spacing={3}>
                 <Grid item xs={12} sm={4} md={3}>
+                  <Box mt={1}>
+                    <Typography variant="h5" align="left">Ingredients</Typography>
+                  </Box>
                   <List>
-                    <Hidden smUp>
-                      <Divider />
-                    </Hidden>
-                    {
-                      Object.entries(props.recipe.Ingredients).map(([ingredient, quantity]) => {
-                        return (
-                          <ListItem key={ingredient}>
-                            {quantity}{' '}{ingredient}
-                          </ListItem>
-                        )
-                      })
-                    }
+                    {Object.entries(props.recipe.Ingredients).map(([ingredient, quantity]) => (
+                      <ListItem key={ingredient}>
+                        {quantity}{' '}{ingredient}
+                      </ListItem>
+                    ))}
                     <Hidden smUp>
                       <Divider />
                     </Hidden>
                   </List>
                 </Grid>
                 <Grid item xs={12} sm={8} md={9}>
+                  <Box mt={1}>
+                    <Typography variant="h5" align="left">Instructions</Typography>
+                  </Box>
                   <List>
-                    {
-                      props.recipe.Instructions.map((instruction, index) => {
-                        return (
-                          <ListItem key={index}>
-                            {instruction}
-                          </ListItem>
-                        )
-                      })
-                    }
+                    {props.recipe.Instructions.map((instruction, index) => (
+                      <ListItem key={index}>
+                        {instruction}
+                      </ListItem>
+                    ))}
                   </List>
                 </Grid> 
               </Grid>

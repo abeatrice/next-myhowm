@@ -192,36 +192,45 @@ export default function RecipeCard() {
                       <Typography variant="h5" align="left">Ingredients</Typography>
                     </Box>
                     <List>
-                    {ingredients.map((ingredient, index) => (
-                      <ListItem key={index}>
-                        <TextField
-                          label="Qty"
-                          size="small"
-                          className={classes.formQty}
-                          value={ingredient.qty}
-                          onChange={e => handleChangeIngredient('qty', index, e.target.value)}
-                        />
-                        <TextField
-                          label="Unit"
-                          size="small"
-                          select
-                          className={classes.formQtyType}
-                          value={ingredient.unit}
-                          onChange={e => handleChangeIngredient('unit', index, e.target.value)}
-                        >
-                          {Units.map(unit => (
-                            <MenuItem key={unit} value={unit}>{unit}</MenuItem>
-                          ))}
-                        </TextField>
-                        <TextField
-                          label="Ingredient"
-                          size="small"
-                          value={ingredient.ingredient}
-                          onChange={e => handleChangeIngredient('ingredient', index, e.target.value)}
-                        />
-                      </ListItem>
-                    ))}
+                      {ingredients.map((ingredient, index) => (
+                        <ListItem key={index}>
+                          <TextField
+                            label="Qty"
+                            size="small"
+                            className={classes.formQty}
+                            value={ingredient.qty}
+                            onChange={e => handleChangeIngredient('qty', index, e.target.value)}
+                          />
+                          <TextField
+                            label="Unit"
+                            size="small"
+                            select
+                            className={classes.formQtyType}
+                            value={ingredient.unit}
+                            onChange={e => handleChangeIngredient('unit', index, e.target.value)}
+                          >
+                            {Units.map(unit => (
+                              <MenuItem key={unit} value={unit}>{unit}</MenuItem>
+                            ))}
+                          </TextField>
+                          <TextField
+                            label="Ingredient"
+                            size="small"
+                            value={ingredient.ingredient}
+                            onChange={e => handleChangeIngredient('ingredient', index, e.target.value)}
+                          />
+                        </ListItem>
+                      ))}
                     </List>
+                    <Box display="flex" justifyContent="flex-start">
+                      <IconButton aria-label="add ingredient" onClick={() => {
+                        let newArr = [...ingredients]
+                        newArr.push({qty:0,unit:Units[0],ingredient:''}) 
+                        setIngredients(newArr)
+                      }}>
+                        <AddIcon />
+                      </IconButton>
+                    </Box>
                   </Grid>
                   <Grid item xs={12} sm={8}>
                     <Box mt={1}>
@@ -242,6 +251,15 @@ export default function RecipeCard() {
                         </ListItem>
                       ))}
                     </List>
+                    <Box display="flex" justifyContent="flex-start">
+                      <IconButton aria-label="add instruction" onClick={() => {
+                        let newArr = [...instructions]
+                        newArr.push('')
+                        setInstructions(newArr)
+                      }}>
+                        <AddIcon />
+                      </IconButton>
+                    </Box>
                   </Grid> 
                 </Grid>
               </CardContent>
