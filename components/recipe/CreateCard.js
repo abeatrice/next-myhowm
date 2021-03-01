@@ -3,6 +3,7 @@ import {makeStyles} from '@material-ui/core/styles'
 import {Card, CardContent, Typography} from '@material-ui/core'
 import {Dialog, DialogTitle, DialogContent, Slide, IconButton, Button, TextField} from '@material-ui/core'
 import {Grid, List, ListItem, Divider, Hidden, Box, MenuItem} from '@material-ui/core'
+import {Paper, InputBase} from '@material-ui/core'
 import {DropzoneArea} from 'material-ui-dropzone'
 import CloseIcon from '@material-ui/icons/Close'
 import SaveIcon from '@material-ui/icons/Save'
@@ -61,7 +62,13 @@ const useStyles = makeStyles((theme) => ({
   },
   recipeDetailCard: {
     borderRadius: 0,
-  }
+  },
+  ingredientRoot: {
+    padding: '2px 4px',
+    display: 'flex',
+    alignItems: 'center',
+    width: 400
+  },
 }))
 
 const Transition = React.forwardRef(
@@ -78,14 +85,14 @@ export default function RecipeCard() {
   const [title, setTitle] = React.useState('')
   const [file, setFile] = React.useState(null)
   const [description, setDescription] = React.useState('')
+  const [instructions, setInstructions] = React.useState([''])
   const [ingredients, setIngredients] = React.useState([
     {
-      qty: 0,
+      qty: '',
       unit: Units[0],
       ingredient: ''
     }
   ])
-  const [instructions, setInstructions] = React.useState([''])
 
   const handleOpen = () => {setOpen(true)}
   const handleClose = () => {setOpen(false)}
@@ -104,6 +111,36 @@ export default function RecipeCard() {
     setIngredients(newIngredients)
   }
 
+  const handleAddIngredient = () => {
+    let newArr = [...ingredients]
+    newArr.push({qty:'',unit:Units[0],ingredient:''}) 
+    setIngredients(newArr)
+  }
+
+  const handleRemoveIngredient = (index) => {
+    if (ingredients.length === 1) {
+      setIngredients([{qty:'',unit:Units[0],ingredient:''}])
+    } else {
+      let newIngredients = ingredients.filter((ingredient, pos) => pos !== index)
+      setIngredients(newIngredients)
+    }
+  }
+
+  const handleAddInstruction = () => {
+    let newArr = [...instructions]
+    newArr.push('')
+    setInstructions(newArr)
+  }
+
+  const handleRemoveInstruction = (index) => {
+    if (instructions.length === 1) {
+      setInstructions([''])
+    } else {
+      let newInstructions = instructions.filter((instruction, pos) => pos !== index)
+      setInstructions(newInstructions)
+    }
+  }
+  
   const handleChangeInstruction = (pos, value) => {
     const newInstructions = [...instructions].map((step, index) => {
       if(index === pos) {
@@ -167,103 +204,101 @@ export default function RecipeCard() {
           </Box>
         </DialogTitle>
         <DialogContent className={classes.dialogContent}>
-            <Card elevation={0} className={classes.recipeDetailCard}>
-              <DropzoneArea 
-                 acceptedFiles={['image/*']}
-                 dropzoneText={"Drag and drop an image here or click"}
-                 dropzoneClass={classes.dropZone}
-                 onChange={files => setFile(files[0])}
-                 className={classes.dropZone}
-                 filesLimit={1}
+          <Card elevation={0} className={classes.recipeDetailCard}>
+            <DropzoneArea 
+                acceptedFiles={['image/*']}
+                dropzoneText={"Drag and drop an image here or click"}
+                dropzoneClass={classes.dropZone}
+                onChange={files => setFile(files[0])}
+                className={classes.dropZone}
+                filesLimit={1}
+            />
+            <CardContent>
+              <TextField 
+                label="Recipe Description"
+                multiline
+                rows={2}
+                variant="outlined"
+                fullWidth
+                value={description}
+                onChange={e => setDescription(e.target.value)}
               />
-              <CardContent>
-                <TextField 
-                  label="Recipe Description"
-                  multiline
-                  rows={2}
-                  variant="outlined"
-                  fullWidth
-                  value={description}
-                  onChange={e => setDescription(e.target.value)}
-                />
-                <Grid container align="center" spacing={3}>
-                  <Grid item xs={12} sm={4}>
-                    <Box mt={1}>
-                      <Typography variant="h5" align="left">Ingredients</Typography>
-                    </Box>
-                    <List>
-                      {ingredients.map((ingredient, index) => (
-                        <ListItem key={index}>
-                          <TextField
-                            label="Qty"
-                            size="small"
-                            className={classes.formQty}
-                            value={ingredient.qty}
-                            onChange={e => handleChangeIngredient('qty', index, e.target.value)}
-                          />
-                          <TextField
-                            label="Unit"
-                            size="small"
-                            select
-                            className={classes.formQtyType}
-                            value={ingredient.unit}
-                            onChange={e => handleChangeIngredient('unit', index, e.target.value)}
-                          >
-                            {Units.map(unit => (
-                              <MenuItem key={unit} value={unit}>{unit}</MenuItem>
-                            ))}
-                          </TextField>
-                          <TextField
-                            label="Ingredient"
-                            size="small"
-                            value={ingredient.ingredient}
-                            onChange={e => handleChangeIngredient('ingredient', index, e.target.value)}
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
-                    <Box display="flex" justifyContent="flex-start">
-                      <IconButton aria-label="add ingredient" onClick={() => {
-                        let newArr = [...ingredients]
-                        newArr.push({qty:0,unit:Units[0],ingredient:''}) 
-                        setIngredients(newArr)
-                      }}>
-                        <AddIcon />
-                      </IconButton>
-                    </Box>
-                  </Grid>
-                  <Grid item xs={12} sm={8}>
-                    <Box mt={1}>
-                      <Typography variant="h5" align="left">Instructions</Typography>
-                    </Box>
-                    <List>
-                      {instructions.map((instruction, index) => (
-                        <ListItem key={index}>
-                          <TextField 
-                            label={"Step " + (index+1)}
-                            multiline
-                            rows={2}
-                            variant="outlined"
-                            fullWidth
-                            value={instruction}
-                            onChange={e => handleChangeInstruction(index, e.target.value)}
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
-                    <Box display="flex" justifyContent="flex-start">
-                      <IconButton aria-label="add instruction" onClick={() => {
-                        let newArr = [...instructions]
-                        newArr.push('')
-                        setInstructions(newArr)
-                      }}>
-                        <AddIcon />
-                      </IconButton>
-                    </Box>
-                  </Grid> 
+              <Grid container align="center" spacing={3}>
+                <Grid item xs={12} sm={4}>
+                  <Box mt={1}>
+                    <Typography variant="h5" align="left">Ingredients</Typography>
+                  </Box>
+                  <Box mt={1} pl={1} display="flex" justifyContent="flex-start" alignItems="center">
+                    <Button startIcon={<AddIcon />} onClick={handleAddIngredient}>Add Ingredient</Button>
+                  </Box>
+                  <List>
+                    {ingredients.map((ingredient, index) => (
+                      <Box mb={2} display="flex" alignItems="center" key={index}>
+                        <IconButton
+                          aria-label="remove ingredient" 
+                          onClick={() => handleRemoveIngredient(index)}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                        <TextField
+                          placeholder="Qty"
+                          size="small"
+                          className={classes.formQty}
+                          value={ingredient.qty}
+                          onChange={e => handleChangeIngredient('qty', index, e.target.value)}
+                        />
+                        <TextField
+                          placeholder="Unit"
+                          size="small"
+                          select
+                          className={classes.formQtyType}
+                          value={ingredient.unit}
+                          onChange={e => handleChangeIngredient('unit', index, e.target.value)}
+                        >
+                          {Units.map(unit => (
+                            <MenuItem key={unit} value={unit}>{unit}</MenuItem>
+                          ))}
+                        </TextField>
+                        <TextField
+                          placeholder="Ingredient"
+                          size="small"
+                          value={ingredient.ingredient}
+                          onChange={e => handleChangeIngredient('ingredient', index, e.target.value)}
+                        />
+                      </Box>
+                    ))}
+                  </List>
                 </Grid>
-              </CardContent>
-            </Card>
+                <Grid item xs={12} sm={8}>
+                  <Box mt={1}>
+                    <Typography variant="h5" align="left">Instructions</Typography>
+                  </Box>
+                  <Box mt={1} pl={1} display="flex" justifyContent="flex-start" alignItems="center">
+                    <Button startIcon={<AddIcon />} onClick={handleAddInstruction}>Add Step</Button>
+                  </Box>
+                  <List>
+                    {instructions.map((instruction, index) => (
+                      <Box pr={2} mb={2} display="flex" alignItems="center" key={index}>
+                        <IconButton
+                          aria-label="remove instruction" 
+                          onClick={() => handleRemoveInstruction(index)}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                        <TextField 
+                          label={"Step " + (index+1)}
+                          size="small"
+                          fullWidth
+                          value={instruction}
+                          onChange={e => handleChangeInstruction(index, e.target.value)}
+                        />
+                      </Box>
+                    ))}
+                  </List>
+                </Grid> 
+              </Grid>
+            </CardContent>
+          </Card>
         </DialogContent>
       </Dialog>
     </form>
