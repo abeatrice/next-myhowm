@@ -1,9 +1,10 @@
 import React from 'react'
+import axios from 'axios'
+import {Cookies} from 'react-cookie'
 import {makeStyles} from '@material-ui/core/styles'
 import {Card, CardContent, Typography} from '@material-ui/core'
 import {Dialog, DialogTitle, DialogContent, Slide, IconButton, Button, TextField} from '@material-ui/core'
-import {Grid, List, ListItem, Divider, Hidden, Box, MenuItem} from '@material-ui/core'
-import {Paper, InputBase} from '@material-ui/core'
+import {Grid, List, Box, MenuItem} from '@material-ui/core'
 import {DropzoneArea} from 'material-ui-dropzone'
 import CloseIcon from '@material-ui/icons/Close'
 import SaveIcon from '@material-ui/icons/Save'
@@ -154,11 +155,34 @@ export default function RecipeCard() {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    console.log(description)
+    // const cookies = new Cookies()
+    // const token = cookies.get('token')
+    const url = 'http://127.0.0.1:3000/recipes'
+    const formData = {
+      Title: title, 
+      File: file, 
+      Description: description, 
+      Instructions: instructions, 
+      Ingredients: ingredients
+    } 
+    const config = {
+      headers: { 
+        // 'Authorization': 'Bearer ' + token,
+        'content-type': 'multipart/form-data'
+      }
+    }
+
+    axios.post(url, formData, config)
+      .then(function(response) {
+        console.log(response)
+      })
+      .catch(function(error) {
+        console.log(error)
+      })
   }
 
   return (
-    <form noValidate onSubmit={handleSubmit}>
+    <form noValidate encType="multipart/form-data" onSubmit={handleSubmit}>
       <Card className={classes.root} onClick={handleOpen} variant="outlined">
         <Box className={classes.content} display="flex" justifyContent="center" alignItems="center">
           <IconButton aria-label="add recipe">
