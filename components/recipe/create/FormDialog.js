@@ -5,12 +5,12 @@ import {makeStyles} from '@material-ui/core/styles'
 import {Card, CardContent, Typography} from '@material-ui/core'
 import {Dialog, DialogContent, Slide, IconButton, Button, TextField} from '@material-ui/core'
 import {Grid, List, Box} from '@material-ui/core'
-import {DropzoneArea} from 'material-ui-dropzone'
 import CloseIcon from '@material-ui/icons/Close'
 import AddIcon from '@material-ui/icons/Add'
 
 import TitleBar from './TitleBar'
 import IngredientList from './IngredientList'
+import DropZone from './DropZone'
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -19,10 +19,6 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     borderRadius: 0,
-  },
-  dropZone: {
-    height: 300,
-    backgroundColor: theme.palette.action.hover
   }
 }))
 
@@ -53,23 +49,6 @@ export default function FormDialog(props) {
   const token = cookies.get('token')
   const axiosConfig = {headers: {'Authorization': 'Bearer ' + token}}
   const serverUrl = 'http://127.0.0.1:3000/recipes'
-
-  const handleFileChange = async (file) => {
-    if(file) {
-      setFile(file)
-      const response = await axios.get(`${serverUrl}/ImageUploadUrl`, {
-        ...axiosConfig, 
-        params: {
-          name: file.name,
-          type: file.type,
-        }
-      })
-      setUploadImgUrl(response.data.signedUrl)
-    } else {
-      setFile(null)
-      setUploadImgUrl('')
-    }
-  }
 
   const handleAddInstruction = () => {
     let newArr = [...instructions]
@@ -145,13 +124,11 @@ export default function FormDialog(props) {
         />
         <DialogContent className={classes.content}>
           <Card elevation={0} className={classes.card}>
-            <DropzoneArea 
-                acceptedFiles={['image/*']}
-                dropzoneText={"Drag and drop an image here or click"}
-                dropzoneClass={classes.dropZone}
-                onChange={([file]) => handleFileChange(file)}
-                className={classes.dropZone}
-                filesLimit={1}
+            <DropZone 
+              setFile={setFile} 
+              setUploadImgUrl={setUploadImgUrl} 
+              serverUrl={serverUrl}
+              axiosConfig={axiosConfig}
             />
             <CardContent>
               <TextField
