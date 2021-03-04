@@ -66,10 +66,12 @@ export default function MenuAppBar() {
             onKeyDown={() => setOpen(false)}
           >
             <List className={classes.list}>
-              <ListItem button>
-                <ListItemIcon><Kitchen /></ListItemIcon>
-                <ListItemText primary="Recipes" />
-              </ListItem>
+              <NextLink href="/recipes">
+                <ListItem button>
+                    <ListItemIcon><Kitchen /></ListItemIcon>
+                    <ListItemText primary="Recipes" />
+                </ListItem>
+              </NextLink>
             </List>
             <Divider />
             <List>
