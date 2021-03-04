@@ -85,6 +85,7 @@ export default function RecipeCard() {
   const [open, setOpen] = React.useState(false)
   const [title, setTitle] = React.useState('')
   const [file, setFile] = React.useState(null)
+  const [uploadImgUrl, setUploadImgUrl] = React.useState('')
   const [description, setDescription] = React.useState('')
   const [instructions, setInstructions] = React.useState([''])
   const [ingredients, setIngredients] = React.useState([
@@ -95,8 +96,30 @@ export default function RecipeCard() {
     }
   ])
 
+  const cookies = new Cookies()
+  const token = cookies.get('token')
+  const axiosConfig = {headers: {'Authorization': 'Bearer ' + token}}
+  const serverUrl = 'http://127.0.0.1:3000/recipes'
+
   const handleOpen = () => {setOpen(true)}
   const handleClose = () => {setOpen(false)}
+
+  const handleFileChange = async (file) => {
+    if(file) {
+      setFile(file)
+      const response = await axios.get(`${serverUrl}/ImageUploadUrl`, {
+        ...axiosConfig, 
+        params: {
+          name: file.name,
+          type: file.type,
+        }
+      })
+      setUploadImgUrl(response.data.signedUrl)
+    } else {
+      setFile(null)
+      setUploadImgUrl('')
+    }
+  }
 
   const handleChangeIngredient = (key, pos, value) => {
     const newIngredients = [...ingredients].map((ingredient, index) => {
@@ -153,32 +176,26 @@ export default function RecipeCard() {
     setInstructions(newInstructions)
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    // const cookies = new Cookies()
-    // const token = cookies.get('token')
-    const url = 'http://127.0.0.1:3000/recipes'
-    const formData = {
-      Title: title, 
-      File: file, 
-      Description: description, 
-      Instructions: instructions, 
-      Ingredients: ingredients
-    } 
-    const config = {
-      headers: { 
-        // 'Authorization': 'Bearer ' + token,
-        'content-type': 'multipart/form-data'
-      }
-    }
+    const response = await axios.put(uploadImgUrl, file, {headers: {'Content-Type': file.type}})
+    console.log(response)
+    
+    // const formData = {
+    //   Title: title, 
+    //   ImgSrc: url,
+    //   Description: description, 
+    //   Instructions: instructions, 
+    //   Ingredients: ingredients
+    // } 
 
-    axios.post(url, formData, config)
-      .then(function(response) {
-        console.log(response)
-      })
-      .catch(function(error) {
-        console.log(error)
-      })
+    // axios.post(url, formData, config)
+    //   .then(function(response) {
+    //     console.log(response)
+    //   })
+    //   .catch(function(error) {
+    //     console.log(error)
+    //   })
   }
 
   return (
@@ -233,7 +250,7 @@ export default function RecipeCard() {
                 acceptedFiles={['image/*']}
                 dropzoneText={"Drag and drop an image here or click"}
                 dropzoneClass={classes.dropZone}
-                onChange={files => setFile(files[0])}
+                onChange={([file]) => handleFileChange(file)}
                 className={classes.dropZone}
                 filesLimit={1}
             />
