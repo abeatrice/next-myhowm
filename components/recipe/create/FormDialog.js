@@ -106,8 +106,6 @@ export default function FormDialog(props) {
       })
   }
 
-  const handleTitleChange = title => setTitle(title)
-
   return (
     <form noValidate encType="multipart/form-data" onSubmit={handleFormSubmit}>
       <Dialog 
@@ -118,7 +116,7 @@ export default function FormDialog(props) {
       >
         <TitleBar
           title={title}
-          handleTitleChange={handleTitleChange}
+          setTitle={setTitle}
           handleFormSubmit={handleFormSubmit}
           handleClose={props.handleClose}
         />

@@ -34,7 +34,7 @@ export default function FormDialog(props) {
           autoFocus
           className={classes.title}
           value={props.title}
-          onChange={e => props.handleTitleChange(e.target.value)}
+          onChange={e => props.setTitle(e.target.value)}
         />
         <div>
           <Button 
