@@ -4,7 +4,7 @@ import {Cookies} from 'react-cookie'
 import {makeStyles} from '@material-ui/core/styles'
 import {Card, CardContent, Typography} from '@material-ui/core'
 import {Dialog, DialogContent, Slide, IconButton, Button, TextField} from '@material-ui/core'
-import {Grid, List, Box, MenuItem} from '@material-ui/core'
+import {Grid, List, Box} from '@material-ui/core'
 import {DropzoneArea} from 'material-ui-dropzone'
 import CloseIcon from '@material-ui/icons/Close'
 import AddIcon from '@material-ui/icons/Add'
@@ -13,38 +13,17 @@ import TitleBar from './TitleBar'
 import IngredientList from './IngredientList'
 
 const useStyles = makeStyles((theme) => ({
-  dropZone: {
-    height: 300,
-    backgroundColor: theme.palette.action.hover
-  },
-  formQty: {
-    width: '4ch',
-  },
-  formQtyType: {
-    width: '10ch',
-    margin: theme.spacing(0, 2)
-  },
   content: {
     margin: 0,
     padding: 0,
   },
-  formButtons: {
-    position: 'absolute',
-    right: theme.spacing(2),
-    top: theme.spacing(2),
-  },
-  button: {
-    margin: theme.spacing(0, 1),
-  },
   card: {
     borderRadius: 0,
   },
-  ingredientRoot: {
-    padding: '2px 4px',
-    display: 'flex',
-    alignItems: 'center',
-    width: 400
-  },
+  dropZone: {
+    height: 300,
+    backgroundColor: theme.palette.action.hover
+  }
 }))
 
 const Transition = React.forwardRef(
@@ -89,35 +68,6 @@ export default function FormDialog(props) {
     } else {
       setFile(null)
       setUploadImgUrl('')
-    }
-  }
-
-  const handleChangeIngredient = (key, pos, value) => {
-    const newIngredients = [...ingredients].map((ingredient, index) => {
-      if(index === pos) {
-        let newIngredient = {...ingredient}
-        newIngredient[key] = value
-        return newIngredient
-      } else {
-        return ingredient
-      }
-    })
-    
-    setIngredients(newIngredients)
-  }
-
-  const handleAddIngredient = () => {
-    let newArr = [...ingredients]
-    newArr.push({Quantity:'', Unit:Units[0], Ingredient:''}) 
-    setIngredients(newArr)
-  }
-
-  const handleRemoveIngredient = (index) => {
-    if (ingredients.length === 1) {
-      setIngredients([{Quantity:'', Unit:Units[0], Ingredient:''}])
-    } else {
-      let newIngredients = ingredients.filter((ingredient, pos) => pos !== index)
-      setIngredients(newIngredients)
     }
   }
 
@@ -219,13 +169,14 @@ export default function FormDialog(props) {
                     <Typography variant="h5" align="left">Ingredients</Typography>
                   </Box>
                   <Box mt={1} pl={1} display="flex" justifyContent="flex-start" alignItems="center">
-                    <Button startIcon={<AddIcon />} onClick={handleAddIngredient}>Add Ingredient</Button>
+                    <Button startIcon={<AddIcon />} onClick={() => setIngredients(
+                      [...ingredients, {Quantity: '', Unit: Units[0], Ingredient: ''}]
+                    )}>Add Ingredient</Button>
                   </Box>
                   <IngredientList 
                     ingredients={ingredients}
                     units={Units}
-                    handleRemoveIngredient={handleRemoveIngredient}
-                    handleChangeIngredient={handleChangeIngredient}
+                    setIngredients={setIngredients}
                   />
                 </Grid>
                 <Grid item xs={12} sm={8}>

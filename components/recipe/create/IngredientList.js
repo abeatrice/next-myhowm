@@ -16,13 +16,36 @@ const useStyles = makeStyles((theme) => ({
 export default function IngredientList(props) {
   const classes = useStyles()
 
+  const handleChangeIngredient = (key, pos, value) => {
+    const newIngredients = [...props.ingredients].map((ingredient, index) => {
+      if(index === pos) {
+        let newIngredient = {...ingredient}
+        newIngredient[key] = value
+        return newIngredient
+      } else {
+        return ingredient
+      }
+    })
+    
+    props.setIngredients(newIngredients)
+  }
+  
+  const handleRemoveIngredient = (index) => {
+    if (props.ingredients.length === 1) {
+      props.setIngredients([{Quantity: '', Unit: props.units[0], Ingredient: ''}])
+    } else {
+      let newIngredients = props.ingredients.filter((ingredient, pos) => pos !== index)
+      props.setIngredients(newIngredients)
+    }
+  }
+
   return (
     <List>
       {props.ingredients.map((ingredient, index) => (
         <Box mb={2} display="flex" alignItems="center" key={index}>
           <IconButton
             aria-label="remove ingredient" 
-            onClick={() => props.handleRemoveIngredient(index)}
+            onClick={() => handleRemoveIngredient(index)}
           >
             <CloseIcon />
           </IconButton>
@@ -31,7 +54,7 @@ export default function IngredientList(props) {
             size="small"
             className={classes.qty}
             value={ingredient.Quantity}
-            onChange={e => props.handleChangeIngredient('Quantity', index, e.target.value)}
+            onChange={e => handleChangeIngredient('Quantity', index, e.target.value)}
           />
           <TextField
             placeholder="Unit"
@@ -39,7 +62,7 @@ export default function IngredientList(props) {
             select
             className={classes.type}
             value={ingredient.Unit}
-            onChange={e => props.handleChangeIngredient('Unit', index, e.target.value)}
+            onChange={e => handleChangeIngredient('Unit', index, e.target.value)}
           >
             {props.units.map(unit => (
               <MenuItem key={unit} value={unit}>{unit}</MenuItem>
@@ -49,7 +72,7 @@ export default function IngredientList(props) {
             placeholder="Ingredient"
             size="small"
             value={ingredient.Ingredient}
-            onChange={e => props.handleChangeIngredient('Ingredient', index, e.target.value)}
+            onChange={e => handleChangeIngredient('Ingredient', index, e.target.value)}
           />
         </Box>
       ))}
