@@ -63,9 +63,9 @@ export default function RecipeCard(props) {
                     <Typography variant="h5" align="left">Ingredients</Typography>
                   </Box>
                   <List>
-                    {Object.entries(props.recipe.Ingredients).map(([ingredient, quantity]) => (
-                      <ListItem key={ingredient}>
-                        {quantity}{' '}{ingredient}
+                    {props.recipe.Ingredients.map((ingredient, index) => (
+                      <ListItem key={index}>
+                        {ingredient.Quantity}{' '}{ingredient.Unit}{' '}{ingredient.Ingredient}
                       </ListItem>
                     ))}
                     <Hidden smUp>

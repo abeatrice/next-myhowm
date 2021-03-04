@@ -80,7 +80,7 @@ const Transition = React.forwardRef(
 
 const Units = ['whole', 'tsp', 'tbsp', 'fl oz', 'cup(s)', 'lb(s)', 'oz', 'mg', 'g']
 
-export default function RecipeCard() {
+export default function RecipeCard(props) {
   const classes = useStyles()
   const [open, setOpen] = React.useState(false)
   const [title, setTitle] = React.useState('')
@@ -90,9 +90,9 @@ export default function RecipeCard() {
   const [instructions, setInstructions] = React.useState([''])
   const [ingredients, setIngredients] = React.useState([
     {
-      qty: '',
-      unit: Units[0],
-      ingredient: ''
+      Quantity: '',
+      Unit: Units[0],
+      Ingredient: ''
     }
   ])
 
@@ -137,13 +137,13 @@ export default function RecipeCard() {
 
   const handleAddIngredient = () => {
     let newArr = [...ingredients]
-    newArr.push({qty:'',unit:Units[0],ingredient:''}) 
+    newArr.push({Quantity:'', Unit:Units[0], Ingredient:''}) 
     setIngredients(newArr)
   }
 
   const handleRemoveIngredient = (index) => {
     if (ingredients.length === 1) {
-      setIngredients([{qty:'',unit:Units[0],ingredient:''}])
+      setIngredients([{Quantity:'', Unit:Units[0], Ingredient:''}])
     } else {
       let newIngredients = ingredients.filter((ingredient, pos) => pos !== index)
       setIngredients(newIngredients)
@@ -176,9 +176,10 @@ export default function RecipeCard() {
     setInstructions(newInstructions)
   }
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault()
-    const response = await axios.put(uploadImgUrl, file, {headers: {'Content-Type': file.type}})
+    
+    axios.put(uploadImgUrl, file, {headers: {'Content-Type': file.type}})
     const ImgSrc = uploadImgUrl.split('?')[0]
     
     const formData = {
@@ -189,9 +190,16 @@ export default function RecipeCard() {
       Ingredients: ingredients
     } 
 
-    axios.post(url, formData, config)
+    axios.post(serverUrl, formData, axiosConfig)
       .then(function(response) {
-        console.log(response)
+        props.handleNewRecipe(formData)
+        setOpen(false)
+        setTitle('')
+        setFile(null)
+        setUploadImgUrl('')
+        setDescription('')
+        setInstructions([''])
+        setIngredients([{Quantity: '', Unit: Units[0],Ingredient: ''}])
       })
       .catch(function(error) {
         console.log(error)
@@ -285,16 +293,16 @@ export default function RecipeCard() {
                           placeholder="Qty"
                           size="small"
                           className={classes.formQty}
-                          value={ingredient.qty}
-                          onChange={e => handleChangeIngredient('qty', index, e.target.value)}
+                          value={ingredient.Quantity}
+                          onChange={e => handleChangeIngredient('Quantity', index, e.target.value)}
                         />
                         <TextField
                           placeholder="Unit"
                           size="small"
                           select
                           className={classes.formQtyType}
-                          value={ingredient.unit}
-                          onChange={e => handleChangeIngredient('unit', index, e.target.value)}
+                          value={ingredient.Unit}
+                          onChange={e => handleChangeIngredient('Unit', index, e.target.value)}
                         >
                           {Units.map(unit => (
                             <MenuItem key={unit} value={unit}>{unit}</MenuItem>
@@ -303,8 +311,8 @@ export default function RecipeCard() {
                         <TextField
                           placeholder="Ingredient"
                           size="small"
-                          value={ingredient.ingredient}
-                          onChange={e => handleChangeIngredient('ingredient', index, e.target.value)}
+                          value={ingredient.Ingredient}
+                          onChange={e => handleChangeIngredient('Ingredient', index, e.target.value)}
                         />
                       </Box>
                     ))}

@@ -1,12 +1,18 @@
 import React from 'react'
 import Head from 'next/head'
 import axios from 'axios'
-import {Typography, CardHeader, CardContent, Card} from '@material-ui/core'
+import {Typography} from '@material-ui/core'
 import AuthLayout from '../components/AuthLayout'
 import {authenticate} from '../utils/auth'
 import RecipeCardGrid from '../components/recipe/CardGrid'
 
-function Page({recipes}) {
+function Page(props) {
+  const [recipes, setRecipes] = React.useState(props.recipes)
+
+  const handleNewRecipe = (recipe) => {
+    setRecipes([...recipes, recipe])
+  }
+
   return (
     <AuthLayout>
       <Head>
@@ -15,7 +21,10 @@ function Page({recipes}) {
       <Typography variant="h4" component="h1" gutterBottom>
         Recipes
       </Typography>
-      <RecipeCardGrid recipes={recipes} />
+      <RecipeCardGrid 
+        recipes={recipes} 
+        handleNewRecipe={handleNewRecipe}
+      />
     </AuthLayout>
   );
 }
