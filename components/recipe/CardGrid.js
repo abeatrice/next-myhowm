@@ -1,7 +1,7 @@
 import React from 'react'
 import {makeStyles} from '@material-ui/core/styles'
 import RecipeCard from './Card'
-import CreateRecipeCard from './CreateCard'
+import CreateRecipeCard from './create/Card'
 import {Grid} from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({

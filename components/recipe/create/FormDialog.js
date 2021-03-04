@@ -11,23 +11,6 @@ import SaveIcon from '@material-ui/icons/Save'
 import AddIcon from '@material-ui/icons/Add'
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    minWidth: 300,
-    maxWidth: 300,
-    minHeight: 300,
-    maxHeight: 300,
-    cursor: 'pointer',
-    backgroundColor: theme.palette.background.default,
-    '&:hover': {
-      backgroundColor: theme.palette.action.selected
-    }
-  },
-  content: {
-    margin: 0,
-    padding: 0,
-    width: 300,
-    height: 300,
-  },
   dropZone: {
     height: 300,
     backgroundColor: theme.palette.action.hover
@@ -80,9 +63,8 @@ const Transition = React.forwardRef(
 
 const Units = ['whole', 'tsp', 'tbsp', 'fl oz', 'cup(s)', 'lb(s)', 'oz', 'mg', 'g']
 
-export default function RecipeCard(props) {
+export default function FormDialog(props) {
   const classes = useStyles()
-  const [open, setOpen] = React.useState(false)
   const [title, setTitle] = React.useState('')
   const [file, setFile] = React.useState(null)
   const [uploadImgUrl, setUploadImgUrl] = React.useState('')
@@ -100,9 +82,6 @@ export default function RecipeCard(props) {
   const token = cookies.get('token')
   const axiosConfig = {headers: {'Authorization': 'Bearer ' + token}}
   const serverUrl = 'http://127.0.0.1:3000/recipes'
-
-  const handleOpen = () => {setOpen(true)}
-  const handleClose = () => {setOpen(false)}
 
   const handleFileChange = async (file) => {
     if(file) {
@@ -193,7 +172,7 @@ export default function RecipeCard(props) {
     axios.post(serverUrl, formData, axiosConfig)
       .then(function(response) {
         props.handleNewRecipe(formData)
-        setOpen(false)
+        props.handleClose()
         setTitle('')
         setFile(null)
         setUploadImgUrl('')
@@ -208,14 +187,7 @@ export default function RecipeCard(props) {
 
   return (
     <form noValidate encType="multipart/form-data" onSubmit={handleSubmit}>
-      <Card className={classes.root} onClick={handleOpen} variant="outlined">
-        <Box className={classes.content} display="flex" justifyContent="center" alignItems="center">
-          <IconButton aria-label="add recipe">
-            <AddIcon />
-          </IconButton>
-        </Box>
-      </Card>
-      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+      <Dialog fullScreen open={props.open} onClose={props.handleClose} TransitionComponent={Transition}>
         <DialogTitle className={classes.dialogTitle} disableTypography>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <TextField 
@@ -245,7 +217,7 @@ export default function RecipeCard(props) {
                 disableElevation
                 startIcon={<CloseIcon />}
                 className={classes.button}
-                onClick={handleClose}
+                onClick={props.handleClose}
                 >
                 Nevermind
               </Button>
