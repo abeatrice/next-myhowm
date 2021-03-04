@@ -179,23 +179,23 @@ export default function RecipeCard() {
   const handleSubmit = async (event) => {
     event.preventDefault()
     const response = await axios.put(uploadImgUrl, file, {headers: {'Content-Type': file.type}})
-    console.log(response)
+    const ImgSrc = uploadImgUrl.split('?')[0]
     
-    // const formData = {
-    //   Title: title, 
-    //   ImgSrc: url,
-    //   Description: description, 
-    //   Instructions: instructions, 
-    //   Ingredients: ingredients
-    // } 
+    const formData = {
+      RecipeName: title,
+      Description: description,
+      ImgSrc: ImgSrc,
+      Instructions: instructions,
+      Ingredients: ingredients
+    } 
 
-    // axios.post(url, formData, config)
-    //   .then(function(response) {
-    //     console.log(response)
-    //   })
-    //   .catch(function(error) {
-    //     console.log(error)
-    //   })
+    axios.post(url, formData, config)
+      .then(function(response) {
+        console.log(response)
+      })
+      .catch(function(error) {
+        console.log(error)
+      })
   }
 
   return (
