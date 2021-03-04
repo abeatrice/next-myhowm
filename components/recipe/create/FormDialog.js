@@ -3,27 +3,19 @@ import axios from 'axios'
 import {Cookies} from 'react-cookie'
 import {makeStyles} from '@material-ui/core/styles'
 import {Card, CardContent, Typography} from '@material-ui/core'
-import {Dialog, DialogTitle, DialogContent, Slide, IconButton, Button, TextField} from '@material-ui/core'
+import {Dialog, DialogContent, Slide, IconButton, Button, TextField} from '@material-ui/core'
 import {Grid, List, Box, MenuItem} from '@material-ui/core'
 import {DropzoneArea} from 'material-ui-dropzone'
 import CloseIcon from '@material-ui/icons/Close'
-import SaveIcon from '@material-ui/icons/Save'
 import AddIcon from '@material-ui/icons/Add'
+
+import TitleBar from './TitleBar'
+import IngredientList from './IngredientList'
 
 const useStyles = makeStyles((theme) => ({
   dropZone: {
     height: 300,
     backgroundColor: theme.palette.action.hover
-  },
-  dialogTitle: {
-    backgroundColor: theme.palette.info.main,
-    margin: 0,
-    padding: theme.spacing(2)
-  },
-  formTitle: {
-    margin: 0,
-    padding: 0,
-    width: '50ch'
   },
   formQty: {
     width: '4ch',
@@ -32,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     width: '10ch',
     margin: theme.spacing(0, 2)
   },
-  dialogContent: {
+  content: {
     margin: 0,
     padding: 0,
   },
@@ -44,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   button: {
     margin: theme.spacing(0, 1),
   },
-  recipeDetailCard: {
+  card: {
     borderRadius: 0,
   },
   ingredientRoot: {
@@ -155,7 +147,7 @@ export default function FormDialog(props) {
     setInstructions(newInstructions)
   }
 
-  const handleSubmit = (event) => {
+  const handleFormSubmit = (event) => {
     event.preventDefault()
     
     axios.put(uploadImgUrl, file, {headers: {'Content-Type': file.type}})
@@ -167,7 +159,7 @@ export default function FormDialog(props) {
       ImgSrc: ImgSrc,
       Instructions: instructions,
       Ingredients: ingredients
-    } 
+    }
 
     axios.post(serverUrl, formData, axiosConfig)
       .then(function(response) {
@@ -185,47 +177,24 @@ export default function FormDialog(props) {
       })
   }
 
+  const handleTitleChange = title => setTitle(title)
+
   return (
-    <form noValidate encType="multipart/form-data" onSubmit={handleSubmit}>
-      <Dialog fullScreen open={props.open} onClose={props.handleClose} TransitionComponent={Transition}>
-        <DialogTitle className={classes.dialogTitle} disableTypography>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
-            <TextField 
-              label="Recipe Name" 
-              size="small"
-              variant="outlined"
-              autoFocus
-              className={classes.formTitle}
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-            />
-            <div>
-              <Button 
-                type="submit" 
-                variant="contained"
-                color="primary"
-                disableElevation
-                startIcon={<SaveIcon />}
-                className={classes.button}
-                onClick={handleSubmit}
-                >
-                Save
-              </Button>
-              <Button 
-                variant="contained"
-                color="secondary" 
-                disableElevation
-                startIcon={<CloseIcon />}
-                className={classes.button}
-                onClick={props.handleClose}
-                >
-                Nevermind
-              </Button>
-            </div>
-          </Box>
-        </DialogTitle>
-        <DialogContent className={classes.dialogContent}>
-          <Card elevation={0} className={classes.recipeDetailCard}>
+    <form noValidate encType="multipart/form-data" onSubmit={handleFormSubmit}>
+      <Dialog 
+        fullScreen 
+        open={props.open} 
+        onClose={props.handleClose} 
+        TransitionComponent={Transition}
+      >
+        <TitleBar
+          title={title}
+          handleTitleChange={handleTitleChange}
+          handleFormSubmit={handleFormSubmit}
+          handleClose={props.handleClose}
+        />
+        <DialogContent className={classes.content}>
+          <Card elevation={0} className={classes.card}>
             <DropzoneArea 
                 acceptedFiles={['image/*']}
                 dropzoneText={"Drag and drop an image here or click"}
@@ -235,7 +204,7 @@ export default function FormDialog(props) {
                 filesLimit={1}
             />
             <CardContent>
-              <TextField 
+              <TextField
                 label="Recipe Description"
                 multiline
                 rows={2}
@@ -252,43 +221,12 @@ export default function FormDialog(props) {
                   <Box mt={1} pl={1} display="flex" justifyContent="flex-start" alignItems="center">
                     <Button startIcon={<AddIcon />} onClick={handleAddIngredient}>Add Ingredient</Button>
                   </Box>
-                  <List>
-                    {ingredients.map((ingredient, index) => (
-                      <Box mb={2} display="flex" alignItems="center" key={index}>
-                        <IconButton
-                          aria-label="remove ingredient" 
-                          onClick={() => handleRemoveIngredient(index)}
-                        >
-                          <CloseIcon />
-                        </IconButton>
-                        <TextField
-                          placeholder="Qty"
-                          size="small"
-                          className={classes.formQty}
-                          value={ingredient.Quantity}
-                          onChange={e => handleChangeIngredient('Quantity', index, e.target.value)}
-                        />
-                        <TextField
-                          placeholder="Unit"
-                          size="small"
-                          select
-                          className={classes.formQtyType}
-                          value={ingredient.Unit}
-                          onChange={e => handleChangeIngredient('Unit', index, e.target.value)}
-                        >
-                          {Units.map(unit => (
-                            <MenuItem key={unit} value={unit}>{unit}</MenuItem>
-                          ))}
-                        </TextField>
-                        <TextField
-                          placeholder="Ingredient"
-                          size="small"
-                          value={ingredient.Ingredient}
-                          onChange={e => handleChangeIngredient('Ingredient', index, e.target.value)}
-                        />
-                      </Box>
-                    ))}
-                  </List>
+                  <IngredientList 
+                    ingredients={ingredients}
+                    units={Units}
+                    handleRemoveIngredient={handleRemoveIngredient}
+                    handleChangeIngredient={handleChangeIngredient}
+                  />
                 </Grid>
                 <Grid item xs={12} sm={8}>
                   <Box mt={1}>
