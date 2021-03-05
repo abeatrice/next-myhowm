@@ -6,7 +6,6 @@ import KitchenIcon from '@material-ui/icons/Kitchen'
 import {makeStyles} from '@material-ui/core/styles'
 import AuthLayout from '../components/layout/AuthLayout'
 import {authenticate} from '../utils/auth'
-import Loading from '../components/utils/Loading'
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -19,7 +18,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Page() {
   const classes = useStyles()
-  const [loading, setLoading] = React.useState(false)
 
   return (
     <AuthLayout>
@@ -28,7 +26,7 @@ export default function Page() {
         </Head>
         <Grid container justify="center">
           <Link href="/recipes">
-            <Box className={classes.link} onClick={() => setLoading(true)}>
+            <Box className={classes.link}>
               <Grid container direction="column" spacing={1} justify="center" alignItems="center">
                 <Grid item>
                   <KitchenIcon style={{ fontSize: 60 }} />
@@ -42,7 +40,6 @@ export default function Page() {
             </Box>
           </Link>
         </Grid>
-        <Loading open={loading} />
     </AuthLayout>
   );
 }

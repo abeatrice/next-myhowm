@@ -1,11 +1,11 @@
 import React from 'react'
-import {useRouter} from 'next/router'
-import axios from 'axios'
 import {Cookies} from 'react-cookie'
+import {useRouter} from 'next/router'
+import NextLink from 'next/link'
+import axios from 'axios'
 import {makeStyles} from '@material-ui/core/styles'
 import {Typography, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText, Divider, Grid, Box} from '@material-ui/core'
 import {Menu, Lock, Kitchen} from '@material-ui/icons'
-import NextLink from 'next/link'
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -17,6 +17,11 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
+const serverUrl = 'http://127.0.0.1:3000/users/logout'
+const cookies = new Cookies()
+const token = cookies.get('token')
+const axiosConfig = { headers: { 'Authorization': 'Bearer ' + token } }
+
 export default function AppDrawer(props) {
   const classes = useStyles()
   const router = useRouter()
@@ -25,15 +30,16 @@ export default function AppDrawer(props) {
 
   const logOut = (event) => {
     event.preventDefault()
-    const cookies = new Cookies()
-    const token = cookies.get('token')
-    axios.post('http://127.0.0.1:3000/users/logout', {}, { headers: { 'Authorization': 'Bearer ' + token } })
+    handleClose()
+    axios.post(serverUrl, {}, axiosConfig)
       .then(function() {
         cookies.remove('token')
         router.push('/login')
       })
       .catch(function(error) {
         console.log(error)
+        cookies.remove('token')
+        router.push('/login')
       })
   };
 
@@ -47,7 +53,7 @@ export default function AppDrawer(props) {
       <List className={classes.list}>
         <Box mx={3} mb={1}>
           <Grid container alignItems="center" justify="space-between">
-            <Grid item>
+            <Grid item onClick={handleClose}>
               <NextLink href="/home">
                 <Typography variant="h6" className={classes.title}>
                   MyHowm
@@ -56,17 +62,17 @@ export default function AppDrawer(props) {
             </Grid>
             <Grid item>
               <IconButton
-                  aria-label="close drawer"
-                  onClick={handleClose}
-                  >
-                  <Menu />
+                aria-label="close drawer"
+                onClick={handleClose}
+              >
+                <Menu />
               </IconButton>
             </Grid>
           </Grid>
         </Box>
         <Divider />
         <NextLink href="/recipes">
-          <ListItem button>
+          <ListItem button onClick={handleClose}>
               <ListItemIcon><Kitchen /></ListItemIcon>
               <ListItemText primary="Recipes" />
           </ListItem>
