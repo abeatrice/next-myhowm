@@ -18,7 +18,7 @@ export default function CardGrid(props) {
       <Grid 
         container
         align="center"
-        spacing={2}
+        spacing={1}
       >
         {props.recipes.map((recipe, index) => (
           <Grid item xs={12} sm={6} md={3} key={index}>

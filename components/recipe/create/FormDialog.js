@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import {Cookies} from 'react-cookie'
+import NProgress from 'nprogress'
 import {makeStyles} from '@material-ui/core/styles'
 import {Card, CardContent, Typography, Grid, Box} from '@material-ui/core'
 import {Dialog, DialogContent, Slide, Button, TextField} from '@material-ui/core'
@@ -54,6 +55,7 @@ export default function FormDialog(props) {
 
   const handleFormSubmit = (event) => {
     event.preventDefault()
+    NProgress.start()
     
     axios.put(uploadImgUrl, file, {headers: {'Content-Type': file.type}})
     const ImgSrc = uploadImgUrl.split('?')[0]
@@ -66,13 +68,17 @@ export default function FormDialog(props) {
       ImgSrc
     }
 
+    props.handleClose()
+    
     axios.post(serverUrl, formData, axiosConfig)
       .then(function() {
         props.handleNewRecipe(formData)
-        props.handleClose()
         resetForm()
+        NProgress.done()
       })
       .catch(function(error) {
+        resetForm()
+        NProgress.done()
         console.log(error)
       })
   }
