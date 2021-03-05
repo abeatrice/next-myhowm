@@ -17,7 +17,7 @@ export default function IngredientList(props) {
   const classes = useStyles()
 
   const handleChangeIngredient = (key, pos, value) => {
-    const newIngredients = [...props.ingredients].map((ingredient, index) => {
+    const ingredients = [...props.ingredients].map((ingredient, index) => {
       if(index === pos) {
         let newIngredient = {...ingredient}
         newIngredient[key] = value
@@ -27,16 +27,15 @@ export default function IngredientList(props) {
       }
     })
     
-    props.setIngredients(newIngredients)
+    props.setIngredients(ingredients)
   }
   
-  const handleRemoveIngredient = (index) => {
-    if (props.ingredients.length === 1) {
-      props.setIngredients([{Quantity: '', Unit: props.units[0], Ingredient: ''}])
-    } else {
-      let newIngredients = props.ingredients.filter((ingredient, pos) => pos !== index)
-      props.setIngredients(newIngredients)
-    }
+  const handleRemoveIngredient = index => {
+    const ingredients = props.ingredients.length === 1 
+      ? [{Quantity: '', Unit: props.units[0], Ingredient: ''}]
+      : props.ingredients.filter((_, pos) => pos !== index)
+
+    props.setIngredients(ingredients)
   }
 
   return (

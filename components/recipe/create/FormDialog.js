@@ -2,14 +2,13 @@ import React from 'react'
 import axios from 'axios'
 import {Cookies} from 'react-cookie'
 import {makeStyles} from '@material-ui/core/styles'
-import {Card, CardContent, Typography} from '@material-ui/core'
-import {Dialog, DialogContent, Slide, IconButton, Button, TextField} from '@material-ui/core'
-import {Grid, List, Box} from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
+import {Card, CardContent, Typography, Grid, Box} from '@material-ui/core'
+import {Dialog, DialogContent, Slide, Button, TextField} from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 
 import TitleBar from './TitleBar'
 import IngredientList from './IngredientList'
+import InstructionsList from './InstructionsList'
 import DropZone from './DropZone'
 
 const useStyles = makeStyles((theme) => ({
@@ -49,32 +48,6 @@ export default function FormDialog(props) {
   const token = cookies.get('token')
   const axiosConfig = {headers: {'Authorization': 'Bearer ' + token}}
   const serverUrl = 'http://127.0.0.1:3000/recipes'
-
-  const handleAddInstruction = () => {
-    let newArr = [...instructions]
-    newArr.push('')
-    setInstructions(newArr)
-  }
-
-  const handleRemoveInstruction = (index) => {
-    if (instructions.length === 1) {
-      setInstructions([''])
-    } else {
-      let newInstructions = instructions.filter((instruction, pos) => pos !== index)
-      setInstructions(newInstructions)
-    }
-  }
-  
-  const handleChangeInstruction = (pos, value) => {
-    const newInstructions = [...instructions].map((step, index) => {
-      if(index === pos) {
-        return value
-      } else {
-        return step
-      }
-    })
-    setInstructions(newInstructions)
-  }
 
   const handleFormSubmit = (event) => {
     event.preventDefault()
@@ -159,27 +132,12 @@ export default function FormDialog(props) {
                     <Typography variant="h5" align="left">Instructions</Typography>
                   </Box>
                   <Box mt={1} pl={1} display="flex" justifyContent="flex-start" alignItems="center">
-                    <Button startIcon={<AddIcon />} onClick={handleAddInstruction}>Add Step</Button>
+                    <Button startIcon={<AddIcon />} onClick={() => setInstructions([...instructions, ''])}>Add Step</Button>
                   </Box>
-                  <List>
-                    {instructions.map((instruction, index) => (
-                      <Box pr={2} mb={2} display="flex" alignItems="center" key={index}>
-                        <IconButton
-                          aria-label="remove instruction" 
-                          onClick={() => handleRemoveInstruction(index)}
-                        >
-                          <CloseIcon />
-                        </IconButton>
-                        <TextField 
-                          label={"Step " + (index+1)}
-                          size="small"
-                          fullWidth
-                          value={instruction}
-                          onChange={e => handleChangeInstruction(index, e.target.value)}
-                        />
-                      </Box>
-                    ))}
-                  </List>
+                  <InstructionsList 
+                    instructions={instructions} 
+                    setInstructions={setInstructions} 
+                  />
                 </Grid> 
               </Grid>
             </CardContent>
