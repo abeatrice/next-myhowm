@@ -1,7 +1,7 @@
 import React from 'react'
 import Head from 'next/head'
 import axios from 'axios'
-import AuthLayout from '../components/AuthLayout'
+import AuthLayout from '../components/layout/AuthLayout'
 import {authenticate} from '../utils/auth'
 import RecipeCardGrid from '../components/recipe/CardGrid'
 

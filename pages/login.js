@@ -1,12 +1,12 @@
 import React, {useState} from 'react'
+import {Cookies} from 'react-cookie'
 import {useRouter} from 'next/router'
-import GuestLayout from '../components/GuestLayout'
 import NextLink from 'next/link'
+import axios from 'axios'
 import {makeStyles} from '@material-ui/core/styles'
 import {TextField, Typography, Button, Grid, Box, FormControl, FormHelperText} from '@material-ui/core'
+import GuestLayout from '../components/layout/GuestLayout'
 import {authenticate} from '../utils/auth'
-import {Cookies} from 'react-cookie'
-import axios from 'axios'
 
 const useStyles = makeStyles((theme) => ({
   paper: {

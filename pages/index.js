@@ -1,6 +1,6 @@
-import Link from '../components/Link'
+import Link from 'next/link'
 import Typography from '@material-ui/core/Typography'
-import GuestLayout from '../components/GuestLayout'
+import GuestLayout from '../components/layout/GuestLayout'
 import {authenticate} from '../utils/auth'
 
 function Page() {

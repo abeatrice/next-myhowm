@@ -1,11 +1,12 @@
 import React from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-import {Grid, Box, Typography, Backdrop, CircularProgress} from '@material-ui/core'
+import {Grid, Box, Typography} from '@material-ui/core'
 import KitchenIcon from '@material-ui/icons/Kitchen'
 import {makeStyles} from '@material-ui/core/styles'
-import AuthLayout from '../components/AuthLayout'
+import AuthLayout from '../components/layout/AuthLayout'
 import {authenticate} from '../utils/auth'
+import Loading from '../components/utils/Loading'
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -13,11 +14,7 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       color: theme.palette.action.disabled
     }
-  },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: '#fff',
-  },
+  }
 }))
 
 export default function Page() {
@@ -45,9 +42,7 @@ export default function Page() {
             </Box>
           </Link>
         </Grid>
-        <Backdrop className={classes.backdrop} open={loading}>
-          <CircularProgress color="inherit" />
-        </Backdrop>
+        <Loading open={loading} />
     </AuthLayout>
   );
 }
