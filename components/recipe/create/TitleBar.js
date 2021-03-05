@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-export default function FormDialog(props) {
+export default function TitleBar(props) {
   const classes = useStyles()
   
   return (
@@ -34,7 +34,7 @@ export default function FormDialog(props) {
           autoFocus
           className={classes.title}
           value={props.title}
-          onChange={e => props.setTitle(e.target.value)}
+          onChange={e => props.setRecipeName(e.target.value)}
         />
         <div>
           <Button 

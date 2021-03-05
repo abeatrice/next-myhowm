@@ -32,7 +32,7 @@ export default function IngredientList(props) {
   
   const handleRemoveIngredient = index => {
     const ingredients = props.ingredients.length === 1 
-      ? [{Quantity: '', Unit: props.units[0], Ingredient: ''}]
+      ? props.emptyIngredients
       : props.ingredients.filter((_, pos) => pos !== index)
 
     props.setIngredients(ingredients)

@@ -5,13 +5,12 @@ import {makeStyles} from '@material-ui/core/styles'
 import {Card, CardContent, Typography, Grid, Box} from '@material-ui/core'
 import {Dialog, DialogContent, Slide, Button, TextField} from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
-
 import TitleBar from './TitleBar'
 import IngredientList from './IngredientList'
 import InstructionsList from './InstructionsList'
 import DropZone from './DropZone'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   content: {
     margin: 0,
     padding: 0,
@@ -31,23 +30,27 @@ const Units = ['whole', 'tsp', 'tbsp', 'fl oz', 'cup(s)', 'lb(s)', 'oz', 'mg', '
 
 export default function FormDialog(props) {
   const classes = useStyles()
-  const [title, setTitle] = React.useState('')
+  const emptyIngredients = [{Quantity: '', Unit: Units[0], Ingredient: ''}]
+  const [RecipeName, setRecipeName] = React.useState('')
+  const [Description, setDescription] = React.useState('')
+  const [Instructions, setInstructions] = React.useState([''])
+  const [Ingredients, setIngredients] = React.useState(emptyIngredients)
   const [file, setFile] = React.useState(null)
   const [uploadImgUrl, setUploadImgUrl] = React.useState('')
-  const [description, setDescription] = React.useState('')
-  const [instructions, setInstructions] = React.useState([''])
-  const [ingredients, setIngredients] = React.useState([
-    {
-      Quantity: '',
-      Unit: Units[0],
-      Ingredient: ''
-    }
-  ])
 
   const cookies = new Cookies()
   const token = cookies.get('token')
   const axiosConfig = {headers: {'Authorization': 'Bearer ' + token}}
   const serverUrl = 'http://127.0.0.1:3000/recipes'
+
+  const resetForm = () => {
+    setRecipeName('')
+    setFile(null)
+    setUploadImgUrl('')
+    setDescription('')
+    setInstructions([''])
+    setIngredients(emptyIngredients)
+  }
 
   const handleFormSubmit = (event) => {
     event.preventDefault()
@@ -56,23 +59,18 @@ export default function FormDialog(props) {
     const ImgSrc = uploadImgUrl.split('?')[0]
     
     const formData = {
-      RecipeName: title,
-      Description: description,
-      ImgSrc: ImgSrc,
-      Instructions: instructions,
-      Ingredients: ingredients
+      RecipeName,
+      Description,
+      Instructions,
+      Ingredients,
+      ImgSrc
     }
 
     axios.post(serverUrl, formData, axiosConfig)
-      .then(function(response) {
+      .then(function() {
         props.handleNewRecipe(formData)
         props.handleClose()
-        setTitle('')
-        setFile(null)
-        setUploadImgUrl('')
-        setDescription('')
-        setInstructions([''])
-        setIngredients([{Quantity: '', Unit: Units[0],Ingredient: ''}])
+        resetForm()
       })
       .catch(function(error) {
         console.log(error)
@@ -88,8 +86,8 @@ export default function FormDialog(props) {
         TransitionComponent={Transition}
       >
         <TitleBar
-          title={title}
-          setTitle={setTitle}
+          title={RecipeName}
+          setRecipeName={setRecipeName}
           handleFormSubmit={handleFormSubmit}
           handleClose={props.handleClose}
         />
@@ -108,23 +106,22 @@ export default function FormDialog(props) {
                 rows={2}
                 variant="outlined"
                 fullWidth
-                value={description}
+                value={Description}
                 onChange={e => setDescription(e.target.value)}
               />
-              <Grid container align="center" spacing={3}>
+              <Grid container spacing={3}>
                 <Grid item xs={12} sm={4}>
                   <Box mt={1}>
                     <Typography variant="h5" align="left">Ingredients</Typography>
                   </Box>
                   <Box mt={1} pl={1} display="flex" justifyContent="flex-start" alignItems="center">
-                    <Button startIcon={<AddIcon />} onClick={() => setIngredients(
-                      [...ingredients, {Quantity: '', Unit: Units[0], Ingredient: ''}]
-                    )}>Add Ingredient</Button>
+                    <Button startIcon={<AddIcon />} onClick={() => setIngredients([...Ingredients, emptyIngredients[0]])}>Add Ingredient</Button>
                   </Box>
                   <IngredientList 
-                    ingredients={ingredients}
+                    ingredients={Ingredients}
                     units={Units}
                     setIngredients={setIngredients}
+                    emptyIngredients={emptyIngredients}
                   />
                 </Grid>
                 <Grid item xs={12} sm={8}>
@@ -132,10 +129,10 @@ export default function FormDialog(props) {
                     <Typography variant="h5" align="left">Instructions</Typography>
                   </Box>
                   <Box mt={1} pl={1} display="flex" justifyContent="flex-start" alignItems="center">
-                    <Button startIcon={<AddIcon />} onClick={() => setInstructions([...instructions, ''])}>Add Step</Button>
+                    <Button startIcon={<AddIcon />} onClick={() => setInstructions([...Instructions, ''])}>Add Step</Button>
                   </Box>
                   <InstructionsList 
-                    instructions={instructions} 
+                    instructions={Instructions} 
                     setInstructions={setInstructions} 
                   />
                 </Grid> 
