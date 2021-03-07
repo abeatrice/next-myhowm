@@ -15,7 +15,7 @@ export default function GuestLayout({children}) {
     <Grid
       container
       spacing={0}
-      align="center"
+      alignItems="center"
       justify="center"
       direction="column"
       className={classes.root}

@@ -53,10 +53,23 @@ export default function FormDialog(props) {
     setIngredients(emptyIngredients)
   }
 
+  const formIsValid = () => {
+    if(!file) {
+      return false
+    }
+    return true
+  }
+
   const handleFormSubmit = (event) => {
     event.preventDefault()
     NProgress.start()
-    
+
+    if (!formIsValid()) {
+      console.log('form not valid')
+      NProgress.done()
+      return
+    }
+
     axios.put(uploadImgUrl, file, {headers: {'Content-Type': file.type}})
     const ImgSrc = uploadImgUrl.split('?')[0]
     
@@ -77,7 +90,6 @@ export default function FormDialog(props) {
         NProgress.done()
       })
       .catch(function(error) {
-        resetForm()
         NProgress.done()
         console.log(error)
       })

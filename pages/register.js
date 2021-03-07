@@ -7,18 +7,9 @@ import {makeStyles} from '@material-ui/core/styles'
 import {TextField, Typography, Button, Grid, Box, FormControl, FormHelperText} from '@material-ui/core'
 import {authenticate} from '../utils/auth'
 import GuestLayout from '../components/layout/GuestLayout'
+import Copyright from '../components/utils/Copyright'
 
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    width: theme.spacing(45),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    '& > *': {
-      margin: theme.spacing(1),
-      width: theme.spacing(10),
-    }
-  },
   form: {
     width: '100%',
     padding: theme.spacing(0, 3),
@@ -74,8 +65,8 @@ function Page() {
 
   return (
     <GuestLayout>
-      <div className={classes.paper} elevation={3}>
-        <Typography component="h1" variant="h5">
+      <Box width={350}>
+        <Typography component="h1" variant="h5" align="center">
           MyHowm
         </Typography>
         <form className={classes.form} noValidate onSubmit={onSubmit}>
@@ -142,17 +133,9 @@ function Page() {
             </Grid>
           </Grid>
         </form>
-      </div>
-      {/* copyright */}
+      </Box>
       <Box mt={8}>
-        <Typography variant="body2" color="textSecondary" align="center">
-          {'Copyright © '}
-          <NextLink color="inherit" href="/">
-            MyHowm
-          </NextLink>{' '}
-          {new Date().getFullYear()}
-          {'.'}
-        </Typography>
+        <Copyright />
       </Box>
     </GuestLayout>
   );
@@ -160,10 +143,7 @@ function Page() {
 
 export async function getServerSideProps(context) {
   await authenticate(context)
-
-  return {
-    props: {},
-  }
+  return {props: {}}
 }
 
 export default Page
