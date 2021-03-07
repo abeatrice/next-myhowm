@@ -7,7 +7,6 @@ import {makeStyles} from '@material-ui/core/styles'
 import {TextField, Typography, Button, Grid, Box, FormControl, FormHelperText} from '@material-ui/core'
 import {authenticate} from '../utils/auth'
 import GuestLayout from '../components/layout/GuestLayout'
-import Copyright from '../components/utils/Copyright'
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -126,16 +125,15 @@ function Page() {
           <Grid container justify="flex-end">
             <Grid item>
               <NextLink href="/login">
-                <Typography variant="body2" color="primary" align="right" className={classes.signup}>
-                  Already have an account? Sign In
-                </Typography>
+                <Button color="secondary" size="small" disableRipple>
+                  <Typography variant="button" color="primary">
+                    Already have an account? Sign In
+                  </Typography>
+                </Button>
               </NextLink>
             </Grid>
           </Grid>
         </form>
-      </Box>
-      <Box mt={8}>
-        <Copyright />
       </Box>
     </GuestLayout>
   );

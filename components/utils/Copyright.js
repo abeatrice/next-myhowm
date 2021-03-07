@@ -10,7 +10,6 @@ export default function Copyright() {
         MyHowm
         </NextLink>{' '}
         {new Date().getFullYear()}
-        {'.'}
     </Typography>
  )
 }
