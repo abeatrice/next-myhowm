@@ -1,140 +1,165 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import {Cookies} from 'react-cookie'
-import NextLink from 'next/link'
 import axios from 'axios'
-import {makeStyles} from '@material-ui/core/styles'
-import {TextField, Typography, Button, Grid, Box, FormControl, FormHelperText} from '@material-ui/core'
+import NProgress from 'nprogress'
+import {TextField} from '@material-ui/core'
 import {authenticate} from '../utils/auth'
 import GuestLayout from '../components/layout/GuestLayout'
+import AuthForm from '../components/auth/AuthForm'
 
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '100%',
-    padding: theme.spacing(0, 3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2)
-  },
-  signup: {
-    cursor: 'pointer',
-    color: theme.palette.primary,
-    '&:hover': {
-      color: theme.palette.secondary,
-    },
-  }
-}))
+const serverUrl = 'http://127.0.0.1:3000'
 
 function Page() {
-  const classes = useStyles()
-  const router = useRouter()
   const cookies = new Cookies()
-  const [UserName, setUserName] = useState('')
-  const [Email, setEmail] = useState('')
-  const [Password, setPassword] = useState('')
-  const [UserNameError, setUserNameError] = useState(false)
-  const [EmailError, setEmailError] = useState(false)
-  const [PasswordError, setPasswordError] = useState(false)
-  const [helperText, setHelperText] = useState('')
+  const router = useRouter()
+  const [submitDisabled, setSubmitDisabled] = useState(false)
+  const [form, setForm] = useState({
+    UserName: '',
+    Email: '',
+    Password: ''
+  })
+  const [errors, setErrors] = useState({
+    UserName: '',
+    Email: '',
+    Password: '',
+    General: ''
+  })
+
+  useEffect(() => {
+    const disabled = (errors.UserName.length > 0 || errors.Email.length > 0 || errors.Password.length > 0)
+    setSubmitDisabled(disabled)
+  })
+
+  const onUserNameInput = (value) => {
+    setForm({...form, UserName: value})
+    
+    let helperText = ''
+    const alphaNumeric = /[^a-zA-Z0-9]/g
+    if(value.trim().length === 0) {
+      helperText = 'User Name can not be empty'
+    } else if (alphaNumeric.test(value)) {
+      helperText = 'User Name can only be numbers and/or letters'
+    } else if (value.trim().length > 20) {
+      helperText = 'User Name can not be longer than 20 characters'
+    } else {
+      helperText = ''
+    }
+
+    setErrors({...errors, UserName: helperText})
+  }
+
+  const onEmailInput = (value) => {
+    setForm({...form, Email: value})
+    
+    let helperText = ''
+    if(value.trim().length === 0) {
+      helperText = 'Email can not be empty'
+    } else if (value.trim().length > 50) {
+      helperText = 'Email can not be longer than 50 characters'
+    } else {
+      helperText = ''
+    }
+
+    setErrors({...errors, Email: helperText})
+  }
+
+  const onPasswordInput = (value) => {
+    setForm({...form, Password: value})
+    
+    let helperText = ''
+    if(value.trim().length === 0) {
+      helperText = 'Password can not be empty'
+    } else if (value.trim().length > 20) {
+      helperText = 'Password can not be longer than 20 characters'
+    } else {
+      helperText = ''
+    }
+
+    setErrors({...errors, Password: helperText})
+  }
 
   const onSubmit = (event) => {
     event.preventDefault()
-    axios.post('http://127.0.0.1:3000/users/register', {UserName, Email, Password})
+    NProgress.start()
+    setSubmitDisabled(true)
+    axios.post(`${serverUrl}/users/register`, form)
       .then(res => {
-        const token = res.data.data.Token
-        cookies.set('token', token)
+        cookies.set('token', res.data.data.Token)
+        NProgress.done()
         router.push('/home')
       })
       .catch(err => {
         let msg = err.response.data.message
         if (msg.includes("UserName")) {
-          setUserNameError(true)
+          setErrors({...errors, UserName: msg})
         } else if (msg.includes("Email")) {
-          setEmailError(true)
+          setErrors({...errors, Email: msg})
         } else if (msg.includes("Password")) {
-          setPasswordError(true)
+          setErrors({...errors, Password: msg})
         } else {
-          setEmailError(true)
-          setUserNameError(true)
-          setPasswordError(true)
+          setErrors({...errors, General: msg})
         }
-        setHelperText(msg)
+        setSubmitDisabled(false)
+        NProgress.done()
       })
   }
 
   return (
     <GuestLayout>
-      <Box width={350}>
-        <Typography component="h1" variant="h5" align="center">
-          MyHowm
-        </Typography>
-        <form className={classes.form} noValidate onSubmit={onSubmit}>
-          <TextField 
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="UserName"
-            label="User Name"
-            name="UserName"
-            autoComplete="username"
-            autoFocus
-            value={UserName}
-            error={UserNameError}
-            onInput={e => {setUserName(e.target.value); setHelperText(''); setUserNameError(false);}}
-          />
-          <TextField 
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="Email"
-            label="Email Address"
-            name="Email"
-            autoComplete="email"
-            value={Email}
-            error={EmailError}
-            onInput={e => {setEmail(e.target.value); setHelperText(''); setEmailError(false);}}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="Password"
-            label="Password"
-            type="Password"
-            id="Password"
-            autoComplete="current-password"
-            value={Password}
-            error={PasswordError}
-            onInput={e => {setPassword(e.target.value); setHelperText(''); setPasswordError(false);}}
-          />
-          <FormControl error={PasswordError || UserNameError || EmailError}>
-            <FormHelperText>{helperText}</FormHelperText>
-          </FormControl>
-          <Button 
-            type="submit" 
-            fullWidth 
-            variant="contained"
-            color="primary" 
-            className={classes.submit}
-          >
-            Sign Up
-          </Button>
-          <Grid container justify="flex-end">
-            <Grid item>
-              <NextLink href="/login">
-                <Button color="secondary" size="small" disableRipple>
-                  <Typography variant="button" color="primary">
-                    Already have an account? Sign In
-                  </Typography>
-                </Button>
-              </NextLink>
-            </Grid>
-          </Grid>
-        </form>
-      </Box>
+      <AuthForm
+        onSubmit={onSubmit}
+        helperText={errors.General}
+        disabled={submitDisabled}
+        submitText='Sign Up'
+        linkHref='/login'
+        linkText="Already have an account? Sign In"
+      >
+        <TextField 
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="UserName"
+          label="User Name"
+          name="UserName"
+          autoComplete="username"
+          autoFocus
+          value={form.UserName}
+          error={errors.UserName.length !== 0}
+          onInput={e => onUserNameInput(e.target.value)}
+          helperText={errors.UserName}
+        />
+        <TextField 
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="Email"
+          label="Email Address"
+          name="Email"
+          autoComplete="email"
+          value={form.Email}
+          error={errors.Email.length !== 0}
+          onInput={e => onEmailInput(e.target.value)}
+          helperText={errors.Email}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="Password"
+          label="Password"
+          type="Password"
+          id="Password"
+          autoComplete="current-password"
+          value={form.Password}
+          error={errors.Password.length !== 0}
+          onInput={e => onPasswordInput(e.target.value)}
+          helperText={errors.Password}
+        />
+      </AuthForm>
     </GuestLayout>
   );
 }

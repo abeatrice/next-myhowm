@@ -67,13 +67,13 @@ function Page() {
     NProgress.start()
     setSubmitDisabled(true)
     axios.post(`${serverUrl}/users/login`, form)
-      .then(function(response) {
-        cookies.set('token', response.data.data.Token)
+      .then(res => {
+        cookies.set('token', res.data.data.Token)
         NProgress.done()
         router.push('/home')
       })
-      .catch(function(error) {
-        let msg = error.response.data.message
+      .catch(err => {
+        let msg = err.response.data.message
         if (msg.includes("UserName")) {
           setErrors({...errors, UserName: msg})
         } else if (msg.includes("Password")) {
@@ -88,11 +88,11 @@ function Page() {
 
   return (
     <GuestLayout>
-      <AuthForm 
+      <AuthForm
         onSubmit={onSubmit}
         helperText={errors.General}
         disabled={submitDisabled}
-        submitText='Sign in'
+        submitText='Sign In'
         linkHref='/register'
         linkText="Don't have an account? Sign Up"
       >
