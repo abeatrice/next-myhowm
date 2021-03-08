@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react'
 import {Cookies} from 'react-cookie'
 import {useRouter} from 'next/router'
-import NextLink from 'next/link'
 import axios from 'axios'
 import NProgress from 'nprogress'
-import {TextField, Typography, Button, Grid, Box, FormControl, FormHelperText} from '@material-ui/core'
+import {TextField} from '@material-ui/core'
 import GuestLayout from '../components/layout/GuestLayout'
 import {authenticate} from '../utils/auth'
+import AuthForm from '../components/auth/AuthForm'
 
 const serverUrl = 'http://127.0.0.1:3000'
 
@@ -66,7 +66,7 @@ function Page() {
     event.preventDefault()
     NProgress.start()
     setSubmitDisabled(true)
-    axios.post(`${serverUrl}/login`, form)
+    axios.post(`${serverUrl}/users/login`, form)
       .then(function(response) {
         cookies.set('token', response.data.data.Token)
         NProgress.done()
@@ -88,68 +88,45 @@ function Page() {
 
   return (
     <GuestLayout>
-      <Box width={350}>
-        <Typography component="h1" variant="h5" align="center">
-          MyHowm
-        </Typography>
-        <form onSubmit={onSubmit}>
-          <TextField 
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="UserName"
-            label="User Name"
-            name="UserName"
-            autoComplete="username"
-            autoFocus
-            value={form.UserName}
-            error={errors.UserName.length !== 0}
-            onInput={e => onUserNameInput(e.target.value)}
-            helperText={errors.UserName}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="Password"
-            label="Password"
-            type="Password"
-            id="Password"
-            autoComplete="current-password"
-            value={form.Password}
-            error={errors.Password.length !== 0}
-            onInput={e => onPasswordInput(e.target.value)}
-            helperText={errors.Password}
-          />
-          <FormControl error={errors.General.length !== 0}>
-            <FormHelperText>{errors.General}</FormHelperText>
-          </FormControl>
-          <Box my={2}>
-            <Button 
-              type="submit" 
-              fullWidth 
-              variant="contained"
-              color="primary"
-              disabled={submitDisabled}
-              >
-              Sign In
-            </Button>
-          </Box>
-          <Grid container justify="flex-end">
-            <Grid item>
-              <NextLink href="/register">
-                <Button color="secondary" size="small" disableRipple>
-                  <Typography variant="button" color="primary">
-                    Don't have an account? Sign Up
-                  </Typography>
-                </Button>
-              </NextLink>
-            </Grid>
-          </Grid>
-        </form>
-      </Box>
+      <AuthForm 
+        onSubmit={onSubmit}
+        helperText={errors.General}
+        disabled={submitDisabled}
+        submitText='Sign in'
+        linkHref='/register'
+        linkText="Don't have an account? Sign Up"
+      >
+       <TextField 
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="UserName"
+          label="User Name"
+          name="UserName"
+          autoComplete="username"
+          autoFocus
+          value={form.UserName}
+          error={errors.UserName.length !== 0}
+          onInput={e => onUserNameInput(e.target.value)}
+          helperText={errors.UserName}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="Password"
+          label="Password"
+          type="Password"
+          id="Password"
+          autoComplete="current-password"
+          value={form.Password}
+          error={errors.Password.length !== 0}
+          onInput={e => onPasswordInput(e.target.value)}
+          helperText={errors.Password}
+        />
+      </AuthForm>
     </GuestLayout>
   )
 }
